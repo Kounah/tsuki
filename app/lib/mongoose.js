@@ -18,6 +18,7 @@ module.exports.connect = async function() {
   });
 
   return await mongoose.connect(conStr, {
-    appname: 'tsuki-api'
+    appname: 'tsuki-api',
+    useNewUrlParser: true
   });
 };
