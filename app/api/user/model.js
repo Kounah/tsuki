@@ -2,15 +2,22 @@ const mongoose = require('mongoose');
 const permissions = require('./permissions');
 
 /**
+ * user model
+ * ---
+ * @namespace model
+ * @memberof module:api/user
+ */
+
+/**
  * @typedef {Object} UserProperties
- * @property {String} login the login name used to login
+ * @property {String} username the login name used to login
  * @property {String} password the sha512 hash of the password
  * @property {String} email the Users email address
  * @property {Object} name
  * @property {String} name.first
  * @property {Array.<String>} name.middle
  * @property {String} name.last
- * @property {Array.<String>} permissions
+ * @property {Array.<permissions.Key>} permissions
  * @property {mongoose.Types.ObjectId} _id
  * @property {Date} _created
  * @property {Date} _updated
@@ -64,7 +71,7 @@ let schema = new mongoose.Schema({
   },
   permissions: [{
     type: String,
-    enum: permissions.keys
+    enum: Object.keys(permissions.keys)
   }]
 }, {
   timestamps: {

@@ -1,15 +1,27 @@
 /**
+ * user permissions
+ * ---
+ * specifies a users permissions
+ * @namespace permissions
+ * @memberof module:api/user
+ **/
+
+/**
  * @typedef {(
- * "ADMIN_SERVER"   |
- * "ADMIN_USER"     |
- * "UPLOAD_FILE"    |
- * "DELETE_FILE"    |
- * "MODIFY_FILE"    |
- * "ADMIN_FILE"     |
- * )} Keys
+ * 'ADMIN_SERVER'|
+ * 'ADMIN_USER'|
+ * 'UPLOAD_FILE'|
+ * 'DELETE_FILE'|
+ * 'MODIFY_FILE'|
+ * 'ADMIN_FILE'
+ * )} Key
  */
 
-module.exports = {
+/**
+ * a collection of permission keys and their description
+ * @exports module:user/permissions.keys
+ */
+module.exports.keys = {
   'ADMIN_SERVER': [
     'allows to configure the server'
   ],
