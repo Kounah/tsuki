@@ -4,7 +4,9 @@ const nunjucks = require('nunjucks');
 // eslint-disable-next-line no-unused-vars
 const http = require('http');
 const conf = require('./app/config').server;
+const nunconf = require('./app/config').nunjucks;
 const api = require('./app/api');
+const router = require('./app/routes');
 
 /**
  * Module Server
@@ -19,7 +21,8 @@ const api = require('./app/api');
 let app = express();
 
 nunjucks.configure(path.join(__dirname, 'views'), {
-  autoescape: true,
+  autoescape: nunconf.autoescape,
+  noCache: nunconf.noCache,
   express: app
 });
 
@@ -29,6 +32,8 @@ let server;
 module.exports.start = function start() {
   server = app.listen(conf.port, () => {
     console.log('listening on port ' + conf.port);
+
+    router(app);
 
     console.log('initializing api');
     api.init(app).then(() => {

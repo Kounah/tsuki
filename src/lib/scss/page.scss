@@ -1,0 +1,40 @@
+@import "./variables";
+
+$sidenav-width: 300px !default;
+
+main {
+  .sidenav {
+    display: block;
+    position: fixed;
+    width: $sidenav-width;
+    height: 100%;
+    padding: 8px 16px;
+    border-right: solid 1px $color-accent;
+    transition: transform 500ms ease-in-out;
+  }
+
+  .page {
+    transition: transform 500ms ease-in-out;
+    padding: 8px 16px;
+  }
+
+  &:not(.open-sidenav) {
+    .sidenav {
+      transform: translateX(- $sidenav-width);
+    }
+
+    .page {
+      transform: translateX(0);
+    }
+  }
+
+  &.open-sidenav {
+    .sidenav {
+      transform: translateX(0);
+    }
+
+    .page {
+      transform: translateX($sidenav-width);
+    }
+  }
+}

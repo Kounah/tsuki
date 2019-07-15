@@ -1,0 +1,12 @@
+@import "./variables";
+
+button[type=button] {
+  border: none;
+  background: $color-accent;
+  padding: 8px;
+  transition: background-color 250ms ease-in-out;
+
+  &:hover {
+    background-color: lighten($color-accent, 10%);
+  }
+}

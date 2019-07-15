@@ -1,0 +1,24 @@
+{% extends "layouts/default.html" %}
+
+{% block title %}
+Welcome
+{% endblock title %}
+
+{% block scripts %}
+{% endblock scripts %}
+
+{% block content %}
+<form action="/api/v1/login" method="POST">
+  <input type="text" hidden class="hidden" value="{{ returnURL }}">
+
+  <div class="input-field">
+    <label for="username">Username</label>
+    <input type="text" name="username" id="login-input-username">
+  </div>
+
+  <div class="input-field">
+    <Label for="password">Password</Label>
+    <input type="password" name="password" id="login-input-password">
+  </div>
+</form>
+{% endblock content %}

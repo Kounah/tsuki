@@ -1,0 +1,36 @@
+<script src="/src/lib/js/nav.js?nocache"></script>
+
+<nav class="nav">
+  <div class="nav-wrapper">
+    <ul class="nav-items start">
+      <li class="link">
+        <button type="button" id="nav-button-menu">
+          <i class="material-icons">menu</i>
+        </button>
+      </li>
+      <li class="link"><a href="/" class="brand">tsuki</a></li>
+    </ul>
+
+    <ul class="nav-items center">
+
+    </ul>
+
+    <ul class="nav-items end">
+      {% if session.user %}
+      <!-- is logged in -->
+
+      this template sucks
+      <li class="link">
+        <button type="button">
+          <img src="/api/v1/user/_me/avatar" class="avatar-image" />
+          {session.user.name}
+        </button>
+      </li>
+      {% else %}
+      <!-- is not logged in -->
+      <li class="link"><a href="/login">Login</a></li>
+      <li class="link"><a href="/register">Register</a></li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>

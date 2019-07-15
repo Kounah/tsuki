@@ -1,0 +1,17 @@
+@import "./variables";
+
+body, html {
+  margin: 0;
+  padding: 0;
+}
+
+body * {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, 'Roboto', 'Nunito', 'Segoe UI', sans-serif;
+  color: $color-text;
+  background-color: $color-background;
+  overflow-x: hidden;
+}

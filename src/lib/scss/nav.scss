@@ -1,0 +1,96 @@
+@import "./variables";
+@import "./bootstrap_breakpoints";
+
+$nav-height: 48px;
+$nav-item-padding: 8px;
+$nav-item-font-size: $nav-height - 2 * $nav-item-padding;
+
+nav.nav {
+  position: absolute;
+
+  top: 0;
+  left: 0;
+  right: 0;
+  height: $nav-height;
+
+  &.fixed {
+    position: fixed;
+    display: block;
+  }
+
+  .nav-wrapper {
+    height: $nav-height;
+    display: flex;
+    flex-direction: row;
+
+    background-color: $color-accent;
+    color: $color-text;
+
+    ul.nav-items {
+      flex: 1 1 0;
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+
+      li {
+        display: inline-block;
+        height: 100%;
+
+        transition: background-color 250ms ease-in-out;
+
+        &:hover {
+          background-color: darken($color-accent, 10%);
+        }
+
+        &.link {
+          a[href] {
+            display: inline-block;
+            text-decoration: none;
+            padding: $nav-item-padding;
+            height: $nav-height;
+            font-size: $nav-item-font-size;
+            color: $color-background;
+          }
+
+          button {
+            display: inline-block;
+            cursor: pointer;
+            height: $nav-height;
+            font-size: $nav-item-font-size;
+            color: $color-background;
+          }
+        }
+
+        &:not(.link) {
+          padding: $nav-item-padding;
+          font-size: $nav-item-font-size;
+        }
+      }
+
+      &.start {
+        align-self: flex-start;
+        flex-direction: row;
+      }
+
+      &.center {
+        align-self: center;
+        align-items: center;
+      }
+
+      &.end {
+        align-self: flex-end;
+        flex-direction: row;
+
+        &::before {
+          content: '';
+          flex: 1 1 0;
+        }
+      }
+    }
+  }
+}
+
+main {
+  margin-top: $nav-height;
+}

@@ -1,0 +1,12 @@
+$color-background: #30394f !default;
+$color-accent: #ff9f7f !default;
+$color-text: #ffefdf !default;
+
+// source: https://github.com/twbs/bootstrap/blob/master/scss/_variables.scss#L179
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px
+) !default;

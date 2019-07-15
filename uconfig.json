@@ -1,0 +1,1 @@
+{"database":{"host":"127.0.0.1","port":"27017","name":"tsuki","username":"undefined","password":"undefined"},"server":{"port":"5000"},"apis":{"user":true},"nunjucks":{"autoescape":true,"no-cache":true},"credentials":{"admin":{"username":"admin","password":"$admin0!"}},"api":{"v1":{"prefix":"/api/v1","user":{"create":true}}}}
