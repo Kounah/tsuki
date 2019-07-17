@@ -37,7 +37,7 @@ function setting(name, defaultvalue, vcb) {
 function ifEmptyString(returnvalue) {
   return function (val) {
     return /\s*/.test(val) ? val : returnvalue;
-  }
+  };
 }
 
 // configures the connection to the database
@@ -45,13 +45,15 @@ module.exports.database = {
   host:       setting('database.host',      '127.0.0.1'),
   port:       setting('database.port',      27017, (val) => Number(val)),
   name:       setting('database.name',      'tsuki'),
-  username:   setting('database.username',  undefined, ifEmptyString(undefined)),
-  password:   setting('database.password',  undefined, ifEmptyString(undefined))
+  username:   setting('database.username',  '', ifEmptyString(undefined)),
+  password:   setting('database.password',  '', ifEmptyString(undefined))
 };
 
 // configures the server
 module.exports.server = {
-  port: setting('server.port', 5000, (val) => Number(val))
+  port: setting('server.port', 5000, (val) => Number(val)),
+  'request-delay': setting('server.request-delay', 0, (val) => Number(val)),
+  'response-delay': setting('server.request-delay', 0, (val) => Number(val)),
 };
 
 // configures credentials
@@ -77,7 +79,7 @@ module.exports.api = {
 
 module.exports.nunjucks = {
   autoescape: setting('nunjucks.autoescape', true),
-  noCache: setting('nunjucks.no-cache', false),
+  'no-cache': setting('nunjucks.no-cache', false),
 };
 
 module.exports.pages = {
@@ -86,6 +88,9 @@ module.exports.pages = {
   register: setting('pages.register', true)
 };
 
+module.exports.templates = {
+  'use-no-cache': setting('templates.use-no-cache', true),
+};
 console.log('config:', module.exports);
 
 ucfg.create(module.exports);

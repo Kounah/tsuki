@@ -6,12 +6,14 @@ const express = require('express');
 const mime = require('mime');
 const sass = require('node-sass');
 const shell = require('shelljs');
+const webmake = require('webmake');
+const error = require('../lib/error');
 
 /**
  * @param {express.Application} app
  */
 module.exports = function router(app) {
-  app.get('/src/*', (req, res) => {
+  app.get('/src/*', error.handler, (req, res) => {
     let relp = path.relative('/src/', req.path);
     let p = path.join(__dirname, '../../src/', relp);
 
@@ -30,7 +32,7 @@ module.exports = function router(app) {
         if(compile) {
           cached = path.join(cache, relp + '.css');
 
-          if(!fs.existsSync(cached) || fs.statSync(p).atime > fs.statSync(cached) || nocache) {
+          if(!fs.existsSync(cached) || fs.statSync(p).atime > fs.statSync(cached).atime || nocache) {
             // actual compilation of the sass is needed
 
             let result = sass.renderSync({
@@ -43,14 +45,51 @@ module.exports = function router(app) {
               if(!fs.existsSync(path.parse(cached).dir))
                 shell.mkdir('-p', path.parse(cached).dir);
               fs.writeFileSync(cached, result.css.toString('utf-8'));
-              res.set('Content-Type', mime.getType('cached')).sendFile(cached);
+              res.set('Content-Type', mime.getType(cached)).sendFile(cached);
             }
           } else {
             // sending cached file is ok if it exists
             res.set('Content-Type', mime.getType(cached)).sendFile(cached);
           }
         } else {
-          res.set('Content-Type', mime.getType(p)).send(p);
+          res.set('Content-Type', mime.getType(p)).sendFile(p);
+        }
+        return;
+      }
+      //#endregion
+
+      //#region application/javascript
+      if(type == 'application/javascript') {
+        if(compile) {
+          cached = path.join(cache, relp + '.bundle.js');
+
+          if(!fs.existsSync(cached) || fs.statSync(p).atime > fs.statSync(cached).atime || nocache) {
+            // compilation of the javascript
+
+            webmake(p, {
+              sourceMap: true,
+              cache: false
+            }, function(err, content) {
+              if(err) {
+                console.error(err);
+                throw error;
+              }
+
+              console.log(content);
+              if(nocache) {
+                res.set('Content-Type', 'application/javascript').end(content);
+              } else {
+                if(!fs.existsSync(path.parse(cached).dir))
+                  shell.mkdir('-p', path.parse(cached).dir);
+                fs.writeFileSync(cached, content);
+                res.set('Content-Type', mime.getType(cached)).sendFile(cached);
+              }
+            });
+          } else {
+            res.set('Content-Type', mime.getType(cached)).sendfile(cached);
+          }
+        } else {
+          res.set('Content-Type', mime.getType(p)).sendFile(p);
         }
         return;
       }

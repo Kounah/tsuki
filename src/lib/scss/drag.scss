@@ -1,0 +1,51 @@
+@import "./variables";
+
+@keyframes pulse {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1.5);
+    opacity: .4;
+  }
+}
+
+.drag-target {
+  margin: 4px;
+  border: 4pt dashed darken($color-background, 15%);
+  border-radius: 4px;
+
+  transition: border-color 250ms ease-in-out;
+
+  &>.title {
+    color: darken($color-background, 15%);
+    display: inline-block;
+    position: relative;
+    padding: 8px;
+    max-width: 100%;
+    transition: color 250ms ease-in-out;
+  }
+
+  &.-drag {
+    border-color: $color-accent;
+
+    &>.title {
+      color: $color-accent;
+    }
+  }
+
+  &.-drop {
+    animation: pulse 500ms ease-in-out infinite alternate;
+  }
+
+  .preview {
+    width: 128px;
+    height: 128px;
+    border: none;
+
+    &.hidden {
+      opacity: 0;
+    }
+  }
+}

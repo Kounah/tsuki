@@ -40,7 +40,7 @@ nav.nav {
         transition: background-color 250ms ease-in-out;
 
         &:hover {
-          background-color: darken($color-accent, 10%);
+          background-color: darken($color-accent, 2.5%);
         }
 
         &.link {

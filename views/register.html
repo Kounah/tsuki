@@ -1,0 +1,72 @@
+{% extends "layouts/default.html" %}
+
+{% block title %}
+Welcome
+{% endblock title %}
+
+{% block scripts %}
+<script src="/src/lib/js/form.js?compile{{'&nocache' if nocache}}"></script>
+{% endblock scripts %}
+
+{% block content %}
+<div class="col center">
+  <form class="box api" action="/api/v1/user/register" method="POST">
+    <div class="progress minimal opacity-hide no-margin">
+      <div class="inner"></div>
+    </div>
+
+    <span class="title">Register</span>
+
+
+    <input type="text" hidden class="hidden" value="{{ returnURL }}">
+
+    <div class="row m-col">
+      <div class="col">
+        <div class="input-field">
+          <label for="register-input-username">Username</label>
+          <input type="text" name="username" id="register-input-username" autocomplete="username">
+        </div>
+
+        <div class="input-field">
+          <label for="register-input-email">Email</label>
+          <input type="email" name="email" id="register-input-email" autocomplete="email">
+        </div>
+
+        <div class="input-field">
+          <label for="register-input-password">Password</label>
+          <input type="password" name="password" id="register-input-password" autocomplete="new-password">
+        </div>
+
+        <div class="input-field">
+          <label for="register-input-confirm-password">Confirm Password</label>
+          <input type="password" id="register-input-confirm-password">
+        </div>
+      </div>
+
+      <div class="divider vertical spacer m-horizontal"></div>
+
+      <div class="col">
+        <div class="input-field">
+          <label for="register-input-name-first">First Name</label>
+          <input type="text" name="name.first" id="register-input-name-first" autocomplete="name">
+        </div>
+
+        <div class="input-field">
+          <label for="register-input-name-middle">Middle Names</label>
+          <input type="text" name="name.middle" id="register-input-name-middle" autocomplete="additional-name">
+        </div>
+
+        <div class="input-field">
+          <label for="register-input-name-last">First Name</label>
+          <input type="text" name="name.last" id="register-input-name-last" autocomplete="family-name">
+        </div>
+      </div>
+    </div>
+
+
+    <div class="input-field indeterminate">
+      <button type="submit" class="btn fill">Register</button>
+    </div>
+  </form>
+</div>
+{% endblock content %}

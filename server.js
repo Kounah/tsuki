@@ -20,9 +20,22 @@ const router = require('./app/routes');
 
 let app = express();
 
+if(typeof conf['request-delay'] == 'number' && conf['request-delay'] > 0) {
+  app.use((req, res, next) => {
+    setTimeout(next, conf['request-delay']);
+  });
+}
+
+if(typeof conf['response-delay'] == 'number' && conf['response-delay'] > 0) {
+  let _end = app.response.end;
+  app.response.end = function(...p) {
+    setTimeout(() => { _end.call(this, ...p); }, conf['response-delay']);
+  };
+}
+
 nunjucks.configure(path.join(__dirname, 'views'), {
   autoescape: nunconf.autoescape,
-  noCache: nunconf.noCache,
+  noCache: nunconf['no-cache'],
   express: app
 });
 

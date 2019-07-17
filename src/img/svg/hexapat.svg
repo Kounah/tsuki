@@ -1,0 +1,35 @@
+<svg width="84" height="48" xmlns="http://www.w3.org/2000/svg">
+ <!-- Created with Method Draw - http://github.com/duopixel/Method-Draw/ -->
+
+ <g>
+  <title>background</title>
+  <rect fill="none" id="canvas_background" height="194" width="112" y="-1" x="-1"/>
+ </g>
+ <g>
+  <title>Layer 1</title>
+
+  <!-- Left -->
+  <polyline points="14,8 28,16 28,32 14,40 0,32 0,16 14,8" stroke-width="1" stroke="rgba(0,0,0,.5)" fill="none" shape-rendering="geometricPrecision" />
+  <line x1="14" y1="0" x2="14" y2="8" stroke-width="1" stroke="rgba(0,0,0,.5)" fill="none" shape-rendering="geometricPrecision" />
+  <line x1="14" y1="40" x2="14" y2="48" stroke-width="1" stroke="rgba(0,0,0,.5)" fill="none" shape-rendering="geometricPrecision" />
+
+  <!-- Middle -->
+  <polyline points="42,8 56,16 56,32 42,40 28,32 28,16 42,8"  stroke-width="1" stroke="rgba(0,0,0,.5)" fill="none" shape-rendering="geometricPrecision" />
+  <line x1="42" y1="0" x2="42" y2="8" stroke-width="1" stroke="rgba(0,0,0,.5)" fill="none" shape-rendering="geometricPrecision" />
+  <line x1="42" y1="40" x2="42" y2="48" stroke-width="1" stroke="rgba(0,0,0,.5)" fill="none" shape-rendering="geometricPrecision" />
+
+  <circle cx="42" cy="24" r="8" stroke-width="1" stroke="rgba(0,0,0,.5)" fill="none" shape-rendering="geometricPrecision" />
+
+  <!-- Right -->
+  <polyline points="70,8 84,16 84,32 70,40 56,32 56,16 70,8" stroke="rgba(0,0,0,.5)" fill="none" shape-rendering="geometricPrecision" />
+  <line x1="70" y1="0" x2="70" y2="8" stroke-width="1" stroke="rgba(0,0,0,.5)" fill="none" shape-rendering="geometricPrecision" />
+  <line x1="70" y1="40" x2="70" y2="48" stroke-width="1" stroke="rgba(0,0,0,.5)" fill="none" shape-rendering="geometricPrecision" />
+
+  <!-- Circles -->
+  <circle cx="0" cy="0" r="8" stroke-width="1" stroke="rgba(0,0,0,.5)" fill="none" shape-rendering="geometricPrecision" />
+  <circle cx="84" cy="0" r="8" stroke-width="1" stroke="rgba(0,0,0,.5)" fill="none" shape-rendering="geometricPrecision" />
+  <circle cx="0" cy="48" r="8" stroke-width="1" stroke="rgba(0,0,0,.5)" fill="none" shape-rendering="geometricPrecision" />
+  <circle cx="84" cy="48" r="8" stroke-width="1" stroke="rgba(0,0,0,.5)" fill="none" shape-rendering="geometricPrecision" />
+
+ </g>
+</svg>

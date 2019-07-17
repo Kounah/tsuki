@@ -3,10 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ff9f7f">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel="stylesheet" href="/src/lib/scss/style.scss?compile&nocache">
+  <link rel="stylesheet" href="/src/lib/scss/style.scss?compile{{'&nocache' if nocache}}">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <title>{% block title %}{% endblock title %}</title>
+  <!-- scripts -->
+  {% block scripts %}{% endblock scripts %}
 </head>
 <body>
   <header>

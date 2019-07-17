@@ -1,0 +1,66 @@
+@import "./variables";
+
+.progress {
+  display: block;
+  width: 100%;
+  transition: opacity 100ms ease-in-out, visibility 50ms;
+  visibility: visible;
+  opacity: 1;
+
+  &.rounded {
+    height: 12px;
+    padding: 2px;
+    border: solid 1px darken($color-background, 15%);
+    border-radius: 6px;
+
+    height: 6px;
+    border-radius: 3px;
+  }
+
+  &.minimal {
+    height: 8px;
+    padding: none;
+    border: none;
+
+    .inner {
+      height: 100%;
+    }
+  }
+
+  .inner {
+    background-color: $color-accent;
+    width: 0;
+    transition: width 100ms ease-in-out;
+  }
+
+  &.indeterminate {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    flex-direction: row;
+
+    .inner {
+      width: 100%;
+      background-image: repeating-linear-gradient(
+        -45deg,
+        lighten($color-accent, 5%),
+        lighten($color-accent, 5%) 1%,
+        darken($color-accent, 5%) 1%,
+        darken($color-accent, 5%) 2%
+      );
+      animation: barberpole 20s linear infinite;
+      background-size: 1000% 1000%;
+    }
+  }
+
+  &:not(.shown) {
+    &:not(.opacity-hide) {
+      visibility: collapse;
+    }
+
+    &.opacity-hide {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+}

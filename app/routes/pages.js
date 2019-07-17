@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 const express = require('express');
 const error = require('../lib/error');
-const config = require('../config').pages;
+const {pages, templates} = require('../config');
 
 /**
  * handles a disabled config
@@ -44,7 +44,8 @@ function handleRender(name, extender) {
   return function(req, res) {
     /**@type {DefaultProps} */
     let o = {
-      session: req.session
+      session: req.session,
+      nocache: templates['use-no-cache'],
     };
 
     if(typeof extender == 'function') {
@@ -58,19 +59,19 @@ function handleRender(name, extender) {
 module.exports = function(app) {
   app.get('/',
     error.handler,
-    configEnabledHandler(config.index, 'the servers index file'),
+    configEnabledHandler(pages.index, 'the servers index file'),
     handleRender('index.html'));
 
   app.get('/login',
     error.handler,
-    configEnabledHandler(config.login, 'the login form'),
-    handleRender('login.html', (o, req, res) => {
+    configEnabledHandler(pages.login, 'the login form'),
+    handleRender('login.html', (o, req) => {
       o.returnURL = req.headers.referer;
       return o;
     }));
 
   app.get('/register',
     error.handler,
-    configEnabledHandler(config.register, 'the register form'),
+    configEnabledHandler(pages.register, 'the register form'),
     handleRender('register.html'));
 };

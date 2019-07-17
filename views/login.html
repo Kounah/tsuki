@@ -5,20 +5,32 @@ Welcome
 {% endblock title %}
 
 {% block scripts %}
+<script src="/src/lib/js/form.js{{'?nocache' if nocache}}"></script>
 {% endblock scripts %}
 
 {% block content %}
-<form action="/api/v1/login" method="POST">
-  <input type="text" hidden class="hidden" value="{{ returnURL }}">
+<div class="col">
+  <div class="grid-item box">
+    <span class="title">Login</span>
+    <form action="/api/v1/user/login" method="POST">
 
-  <div class="input-field">
-    <label for="username">Username</label>
-    <input type="text" name="username" id="login-input-username">
-  </div>
+      <input type="text" hidden class="hidden" value="{{ returnURL }}">
 
-  <div class="input-field">
-    <Label for="password">Password</Label>
-    <input type="password" name="password" id="login-input-password">
+      <div class="input-field">
+        <label for="login-input-username">Username</label>
+        <input type="text" name="username" id="login-input-username" autocomplete="username">
+      </div>
+
+      <div class="input-field">
+        <label for="login-input-password">Password</label>
+        <input type="password" name="password" id="login-input-password" autocomplete="current-password">
+      </div>
+
+      <div class="input-field">
+        <button type="submit" class="btn fill">Login</button>
+      </div>
+
+    </form>
   </div>
-</form>
+</div>
 {% endblock content %}

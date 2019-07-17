@@ -1,4 +1,5 @@
 @import "./variables";
+@import "./bootstrap_breakpoints";
 
 $sidenav-width: 300px !default;
 
@@ -11,6 +12,7 @@ main {
     padding: 8px 16px;
     border-right: solid 1px $color-accent;
     transition: transform 500ms ease-in-out;
+    background-color: $color-background;
   }
 
   .page {
@@ -35,6 +37,84 @@ main {
 
     .page {
       transform: translateX($sidenav-width);
+    }
+  }
+}
+
+.box {
+  border-radius: 8px;
+  border: solid 1pt darken($color-background, 10%);
+  background-color: darken($color-background, 5%);
+  transition: width 1s ease-in-out,
+    height 1s ease-in-out;
+  overflow: hidden;
+
+  @include media-breakpoint-down(xs) {
+    width: 100%;
+    align-self: stretch;
+  }
+
+  max-width: 100vw;
+
+  &>.title {
+    display: block;
+    // padding: 8px;
+    font-size: 2em;
+    border-bottom: solid 1pt darken($color-background, 10%);
+    text-align: center
+  }
+
+  &>:not(.title):not(.no-margin) {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  >:last-child {
+    margin-bottom: 8px;
+  }
+}
+
+.divider {
+  display: block;
+  background-color: darken($color-background, 15%);
+  align-self: stretch;
+  flex: 1 1 0;
+
+  &.vertical {
+    width: 1px;
+    // height: 100%;
+
+    &.spacer {
+      margin: 0 4px;
+    }
+  }
+
+  &.horizontal {
+    height: 1px;
+    // width: 100%;
+
+    &.spacer {
+      margin: 4px 0;
+    }
+  }
+
+  @include media-breakpoint-down(xs) {
+    &.m-horizontal {
+      height: 1px;
+      width: 100%;
+
+      &.spacer {
+        margin: 4px 0;
+      }
+    }
+
+    &.m-vertical {
+      widows: 1px;
+      height: 100%;
+
+      &.spacer {
+        margin: 0 4px;
+      }
     }
   }
 }

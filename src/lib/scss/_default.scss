@@ -10,8 +10,9 @@ body * {
 }
 
 body {
-  font-family: -apple-system, 'Roboto', 'Nunito', 'Segoe UI', sans-serif;
+  font-family: $font-stack;
   color: $color-text;
-  background-color: $color-background;
+  background: $color-background url('/src/img/svg/hexapat.svg');
+  background-attachment: scroll;
   overflow-x: hidden;
 }
