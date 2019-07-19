@@ -5,32 +5,46 @@ Welcome
 {% endblock title %}
 
 {% block scripts %}
-<script src="/src/lib/js/form.js{{'?nocache' if nocache}}"></script>
+<script src="/src/lib/js/form.js?compile{{'&nocache' if nocache}}"></script>
+<script>
+function validateUsername(el) {
+  return typeof el.value == 'string' && !/^[\s]*$/.test(el.value) && el.value.length > 0;
+}
+
+function validatePassword(el) {
+  return typeof el.value == 'string' && el.value.length >= Number('{{ validation["user-min-pwd-length"] }}');
+}
+</script>
 {% endblock scripts %}
 
 {% block content %}
-<div class="col">
-  <div class="grid-item box">
+<div class="col center">
+  <form class="box api" action="/api/v1/user/login" method="POST" data-focus>
+    <div class="progress minimal opacity-hide no-margin">
+      <div class="inner"></div>
+    </div>
+
     <span class="title">Login</span>
-    <form action="/api/v1/user/login" method="POST">
 
-      <input type="text" hidden class="hidden" value="{{ returnURL }}">
+    <input type="text" hidden class="hidden" value="{{ returnURL }}">
 
+    <div class="col">
       <div class="input-field">
         <label for="login-input-username">Username</label>
-        <input type="text" name="username" id="login-input-username" autocomplete="username">
+        <input type="text" name="username" id="login-input-username" autocomplete="username" tabindex="0" validate="validateUsername(this)">
+        <span class="validation">The username must not be empty.</span>
       </div>
 
       <div class="input-field">
         <label for="login-input-password">Password</label>
-        <input type="password" name="password" id="login-input-password" autocomplete="current-password">
+        <input type="password" name="password" id="login-input-password" autocomplete="current-password" tabindex="0" validate="validatePassword(this)">
+        <span class="validation">The password must have at least {{ validation["user-min-pwd-length"] }} characters.</span>
       </div>
 
-      <div class="input-field">
-        <button type="submit" class="btn fill">Login</button>
+      <div class="input-field center">
+        <button type="submit" class="btn">Login</button>
       </div>
-
-    </form>
-  </div>
+    </div>
+  </form>
 </div>
 {% endblock content %}

@@ -54,6 +54,26 @@ module.exports.server = {
   port: setting('server.port', 5000, (val) => Number(val)),
   'request-delay': setting('server.request-delay', 0, (val) => Number(val)),
   'response-delay': setting('server.request-delay', 0, (val) => Number(val)),
+  session: {
+    secret: setting('server.session.secret', ((os, crypto, package) => {
+      return crypto.createHash('sha512').update([
+        package['name'],
+        package['version'],
+        os.userInfo().username,
+        os.hostname(),
+        os.platform(),
+        os.arch(),
+        os.release(),
+        os.type()
+      ].join(':')).digest('hex');
+    })(require('os'), require('crypto'), require('../package.json'))),
+    resave: setting('server.session.resave', false, val => Boolean(val)),
+    'save-uninitialized': setting('server.session.save-uninitialized', true, val => Boolean(val)),
+    cookie: {
+      secure: setting('server.session.cookie.secure', true, val => Boolean(val)),
+      'max-age': setting('server.session.cookie.max-age', null, val => eval(val))
+    }
+  }
 };
 
 // configures credentials
@@ -61,6 +81,10 @@ module.exports.credentials = {
   admin: {
     username: setting('credentials.admin.username', 'admin'),
     password: setting('credentials.admin.password', '$admin0!')
+  },
+  _rules: {
+    user: {
+    }
   }
 };
 
@@ -73,6 +97,8 @@ module.exports.api = {
     prefix: setting('api.v1.prefix', '/api/v1'),
     user: {
       create: setting('api.v1.user.create', true),
+      login: setting('api.v1.user.login', true),
+      register: setting('api.v1.user.register', true)
     }
   }
 };
@@ -90,6 +116,10 @@ module.exports.pages = {
 
 module.exports.templates = {
   'use-no-cache': setting('templates.use-no-cache', true),
+  validation: {
+    'user-min-pwd-length': setting('templates.validation.user-min-pwd-length', 8, val => Number(val))
+  }
+
 };
 console.log('config:', module.exports);
 

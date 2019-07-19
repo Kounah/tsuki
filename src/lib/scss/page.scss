@@ -43,7 +43,7 @@ main {
 
 .box {
   border-radius: 8px;
-  border: solid 1pt darken($color-background, 10%);
+  border: solid 1pt darken($color-background, 15%);
   background-color: darken($color-background, 5%);
   transition: width 1s ease-in-out,
     height 1s ease-in-out;
@@ -60,7 +60,7 @@ main {
     display: block;
     // padding: 8px;
     font-size: 2em;
-    border-bottom: solid 1pt darken($color-background, 10%);
+    border-bottom: solid 1px darken($color-background, 15%);
     text-align: center
   }
 
@@ -69,7 +69,7 @@ main {
     padding-right: 8px;
   }
 
-  >:last-child {
+  &>:last-child {
     margin-bottom: 8px;
   }
 }
@@ -81,7 +81,8 @@ main {
   flex: 1 1 0;
 
   &.vertical {
-    width: 1px;
+    width: 1pt;
+    max-width: 1px;
     // height: 100%;
 
     &.spacer {
@@ -91,6 +92,7 @@ main {
 
   &.horizontal {
     height: 1px;
+    max-height: 1px;
     // width: 100%;
 
     &.spacer {

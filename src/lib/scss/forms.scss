@@ -1,56 +1,86 @@
 @import "./variables";
 
-
-button[type=button] {
+button[type=button].flat {
   border: none;
-  background: $color-accent;
-  padding: 8px;
-  transition: background-color 150ms ease-in-out,
-    box-shadow 20ms ease-in-out;
+  background-color: $color-accent;
+  transition: background-color .2s ease;
 
-  &:focus, &:hover {
-    background-color: darken($color-accent, 2.5%);
+  &:hover, &:focus {
+    background-color: darken($color-accent, 10%);
+  }
+
+  &:focus {
     outline: 0;
+  }
+}
+
+$button-padding: 8px;
+
+.btn, button[type=button]:not(.flat) {
+  position: relative;
+  display: inline-block;
+
+  perspective: 100px;
+  z-index: 0;
+
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    display: block;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+  }
+
+  // &::after {
+  //   transform: scale(.75, .5);
+  //   opacity: 0;
+  //   border-radius: 4px;
+  //   box-sizing: border-box;
+  //   border: solid 0pt white;
+  //   transition: transform .15s ease-in-out, opacity .15s ease-in-out, border-width .15s ease-in-out, border-radius .15s ease-in-out;
+  // }
+
+  &::before {
+    opacity: .2;
+    background: radial-gradient(
+      circle,
+    #000,
+      #000 10%,
+      transparent 10%,
+      transparent
+    ) center;
+    background-size: 0;
+    background-repeat: no-repeat;
+    mix-blend-mode: color-burn;
   }
 
   &:active {
-    background-color: darken($color-accent, 7.5%);
-  }
-}
-
-@keyframes move-background {
-  0% {
-    background-position: -50% 50%;
-  }
-  100% {
-    background-position: 150% 50%;
-  }
-}
-
-.btn {
-  &::before {
-    content: '';
-    flex: 1 1 0;
-    align-self: flex-start;
-    order: -1;
+    &::before {
+      transition: background-size .5s ease-in-out .1s,
+        opacity .5s ease-in-out .1s;
+      background-size: 1500%;
+      opacity: 0;
+    }
   }
 
-  &::after {
-    content: '';
-    flex: 1 1 0;
-    align-self: flex-end;
-    order: 1;
-  }
+  // &::after {
+  //   content: '';
+  //   flex: 1 1 0;
+  //   align-self: flex-end;
+  //   order: 1;
+  // }
 
   &>* {
     vertical-align: middle;
   }
 
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  align-content: center;
-  padding: 8px;
+  display: inline-block;
+  // flex-direction: row;
+  // align-items: center;
+  // align-content: center;
+  padding: $button-padding;
   border: none;
   border-radius: 4px;
   font-family: $font-stack;
@@ -61,19 +91,21 @@ button[type=button] {
 
   cursor: pointer;
 
-  background-size: 400% 400%;
-  background-image: linear-gradient(-69deg, transparent 30%, rgba(255,255,255,.25) 50%, 70%, transparent 100%);
-  background-blend-mode: color-dodge;
-  animation: move-background 2s infinite ease-in-out alternate;
+  // background-size: 400% 400%;
+  // background-image: linear-gradient(-69deg, transparent 30%, rgba(255,255,255,.25) 50%, 70%, transparent 100%);
+  // background-blend-mode: color-dodge;
+  // animation: move-background 2s infinite ease-in-out alternate;
 
-  transition: background-color 150ms ease-in-out,
+  transition: $transition-outline,
+    background-color 150ms ease-in-out,
     box-shadow 200ms ease-in-out;
+
+  @include outline;
 
   &:hover, &:focus {
     box-shadow: 2px 3px 4px rgba(0,0,0,.25),
       -2px 3px 4px rgba(0,0,0,.25);
     background-color: lighten($color-accent, 2.5%);
-    outline: 0;
   }
 
   &:active {
@@ -88,9 +120,16 @@ button[type=button] {
 
 form {
   div.input-field {
+    position: relative;
     display: block;
-    margin-bottom: 12px;
     width: 100%;
+    &:not(:last-child) {
+      margin-bottom: 12px;
+    }
+
+    &.center {
+      text-align: center;
+    }
 
     label {
       display: block;
@@ -110,6 +149,20 @@ form {
       }
     }
 
+    .validation {
+      position: absolute;
+      padding: 8px;
+      margin-top: 4px;
+      background-color: darken($color-background, 15%);
+      border-color: darken($color-background, 20%);
+      border-radius: 4px;
+      transition: transform .35s ease-in-out, opacity .2s ease-in-out;
+      transform: translateY(1em) scale(1.5);
+      opacity: 0;
+      width: 100%;
+      z-index: -1;
+    }
+
     input {
       display: block;
 
@@ -127,6 +180,35 @@ form {
       &:focus {
         outline: 0;
         border-color: $color-accent;
+      }
+    }
+
+    &.invalid {
+      input {
+        border-color: $color-invalid;
+      }
+
+      .validation {
+        color: $color-invalid;
+      }
+
+      &:focus-within {
+        .validation {
+          visibility: visible;
+          transform: translate(0);
+          opacity: 1;
+          z-index: 1;
+        }
+      }
+    }
+
+    &.valid {
+      input {
+        border-color: $color-valid;
+      }
+
+      .validation {
+        color: $color-invalid;
       }
     }
   }

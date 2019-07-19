@@ -18,8 +18,10 @@ function getOpenModals() {
 function updateOverlay() {
   if(getOpenModals().length > 0) {
     overlay.classList.add('shown');
+    return true;
   } else {
     overlay.classList.remove('shown');
+    return false;
   }
 }
 
@@ -63,11 +65,31 @@ function Modal(el, options) {
    * @type {Boolean}
    */
   this.closed;
+  /**
+   * is the modal dismissed
+   * @type {Boolean}
+   */
   this.dismissed;
+  /**
+   * the element that was focused before `focus()` has been called
+   * @type {HTMLElement}
+   */
+  this.focusedBy;
 
   //#endregion
 
   //#region FUNCTIONS
+
+
+  /**
+   *
+   */
+  function focus() {
+    this.focusedBy = document.activeElement;
+    this.el.focus();
+    return this;
+  }
+  this.focus = focus.bind(this);
 
   /**
    * opens the modal
@@ -75,7 +97,7 @@ function Modal(el, options) {
   function open() {
     this.el.classList.add('shown');
     this.closed = false;
-    this.el.focus();
+    this.focus();
     updateOverlay();
     return this;
   }
@@ -114,7 +136,9 @@ function Modal(el, options) {
   function dismiss() {
     this.el.classList.add('dismissing');
     modals.splice(modals.indexOf(this), 1);
-    updateOverlay();
+    if(!updateOverlay()) {
+      this.focusedBy.focus();
+    }
     setTimeout(function() {
       this.el.classList.remove('dismissing');
       this.el.parentElement.removeChild(this.el);
@@ -135,10 +159,19 @@ function Modal(el, options) {
   if(typeof el !== 'object' || el === null) {
     this.el = document.createElement('div');
     this.el.classList.add('modal');
+    this.el.setAttribute('tabindex', '-1');
 
-    document.addEventListener('keypress', function(ev) {
-      if(ev.which == 27) {
-        this.close();
+    this.el.addEventListener('keydown', function(ev) {
+      console.log(ev);
+
+      if(ev.key == 'Tab') {
+        ev.preventDefault();
+        footer.querySelector('button[tabindex]').focus();
+      }
+
+      if(ev.key == 'Escape') {
+        ev.preventDefault();
+        this.dismiss();
       }
     }.bind(this));
 
@@ -170,6 +203,7 @@ function Modal(el, options) {
       this.dismiss();
     }.bind(this));
     dismissBtn.appendChild(icon.make('delete'));
+    dismissBtn.setAttribute('tabindex', '-1');
 
     var dismissText = document.createElement('span');
     dismissText.textContent = 'Dismiss';

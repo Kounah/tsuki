@@ -14,7 +14,6 @@ const config = require('../../config');
 
 /**
  * Handler for the `POST` -> `/user` route
- * @member {Handler} create
  */
 module.exports.create = new Handler({
   enabled: config.api.v1.user.create,
@@ -40,4 +39,17 @@ module.exports.create = new Handler({
       res.sendStatus(201);
       break;
     }
+  });
+
+/**
+ * Handler for the `POST` -> `/user/login` route
+ */
+module.exports.login = new Handler({
+  enabled: config.api.v1.user.login,
+  path: '/user/login',
+  method: 'POST'
+})
+  .register(error.handler, {unshift: true})
+  .register(async (req, res) => {
+    
   });

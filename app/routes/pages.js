@@ -46,6 +46,7 @@ function handleRender(name, extender) {
     let o = {
       session: req.session,
       nocache: templates['use-no-cache'],
+      validation: templates.validation
     };
 
     if(typeof extender == 'function') {

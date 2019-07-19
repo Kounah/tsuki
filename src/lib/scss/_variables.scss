@@ -1,6 +1,9 @@
 $color-background: #30394f !default;
 $color-accent: #ff9f7f !default;
+// $color-accent: #00c8ff !default;
 $color-text: #ffefdf !default;
+$color-invalid: #ff4080;
+$color-valid: #20df40;
 
 // source: https://github.com/twbs/bootstrap/blob/master/scss/_variables.scss#L179
 $grid-breakpoints: (
@@ -12,3 +15,19 @@ $grid-breakpoints: (
 ) !default;
 
 $font-stack: -apple-system, 'Roboto', 'Nunito', 'Segoe UI', sans-serif;
+
+$transition-outline: outline-offset .2s ease-in-out,
+  outline-color .2s ease-in-out,
+  outline-width .2s ease-in-out;
+
+@mixin outline {
+  outline-style: solid;
+  outline-color: opacify($color-accent, 0);
+  outline-offset: 0px;
+  outline-width: 0pt;
+  &:focus {
+    outline-color: opacify($color-accent, .5);
+    outline-width: 1pt;
+    outline-offset: 4px;
+  }
+}

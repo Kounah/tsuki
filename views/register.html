@@ -10,7 +10,7 @@ Welcome
 
 {% block content %}
 <div class="col center">
-  <form class="box api" action="/api/v1/user/register" method="POST">
+  <form class="box api" action="/api/v1/user/register" method="POST" data-focus="true">
     <div class="progress minimal opacity-hide no-margin">
       <div class="inner"></div>
     </div>
@@ -63,6 +63,7 @@ Welcome
       </div>
     </div>
 
+    <div class="divider horizontal spacer"></div>
 
     <div class="input-field indeterminate">
       <button type="submit" class="btn fill">Register</button>

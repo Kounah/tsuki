@@ -1,5 +1,6 @@
 const path = require('path');
 const express = require('express');
+const session = require('express-session');
 const nunjucks = require('nunjucks');
 // eslint-disable-next-line no-unused-vars
 const http = require('http');
@@ -32,6 +33,16 @@ if(typeof conf['response-delay'] == 'number' && conf['response-delay'] > 0) {
     setTimeout(() => { _end.call(this, ...p); }, conf['response-delay']);
   };
 }
+
+app.use(session({
+  secret: conf.session.secret,
+  resave: conf.session.resave,
+  saveUninitialized: conf.session['save-uninitialized'],
+  cookie: {
+    secure: conf.session.cookie.secure,
+    maxAge: conf.session.cookie['max-age']
+  }
+}));
 
 nunjucks.configure(path.join(__dirname, 'views'), {
   autoescape: nunconf.autoescape,

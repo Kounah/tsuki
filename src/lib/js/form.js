@@ -12,6 +12,19 @@ function initLabels() {
       label.style.transform = 'translateY(' + input.getBoundingClientRect().height + 'px)';
     }
 
+    input.addEventListener('change', function() {
+      if(this.getAttribute('validate')) {
+        let valid = eval('(function() { return ' + input.getAttribute('validate') + ' }.bind(input))()');
+        if(valid) {
+          input.parentElement.classList.remove('invalid');
+          input.parentElement.classList.add('valid');
+        } else {
+          input.parentElement.classList.add('invalid');
+          input.parentElement.classList.remove('valid');
+        }
+      }
+    });
+
     input.addEventListener('focus', function() {
       label.classList.add('focused');
       label.style.transform = '';
@@ -28,6 +41,7 @@ function initLabels() {
 
 /**
  * @param {HTMLFormElement} form
+ * @returns {[Boolean, Object]}
  */
 function jsonFormData(form) {
   var formData = new FormData(form);
@@ -48,19 +62,31 @@ function jsonFormData(form) {
       v = Number(v);
     }
 
+    if(i.getAttribute('validate')) {
+      console.log(i.getAttribute('validate'));
+      var valid = eval('(function(i) { return ' + i.getAttribute('validate') + ' }.bind(i))(i)');
+      console.log(valid);
+      if(!valid) {
+        i.parentElement.classList.add('invalid');
+        r[0] = false;
+      } else {
+        i.parentElement.classList.remove('invalid');
+      }
+    }
+
     if(k.endsWith('[]')) {
       k = k.substring(0, k.length - 2);
-      if(typeof r[k] == 'object' && r[k] instanceof Array) {
-        r[k].push(v);
+      if(typeof r[1][k] == 'object' && r[1][k] instanceof Array) {
+        r[1][k].push(v);
       } else {
-        r[k] = [v];
+        r[1][k] = [v];
       }
     } else {
-      r[k] = v;
+      r[1][k] = v;
     }
 
     return r;
-  }, {});
+  }, [true, {}]);
 }
 module.exports.initLabels = initLabels;
 
@@ -88,9 +114,14 @@ function initApiForm() {
 
       var xhr = new XMLHttpRequest();
 
-      var data;
+      var data = jsonFormData(form);
+      var valid = data[0];
+      data = data[1];
+
+      if(!valid) return;
+
       if(form.enctype === 'application/json') {
-        data = JSON.stringify(jsonFormData(form));
+        data = JSON.stringify(data);
         xhr.setRequestHeader('Content-Type', 'application/json');
       } else {
         data = new FormData(form);
@@ -110,13 +141,13 @@ function initApiForm() {
 
         // response body
         var rb;
-        if(/^application\/json.*/.test(ct)) {
+        if(/^application\/json[;.*]/.test(ct)) {
           rb = JSON.parse(this.responseText);
         } else {
           rb = this.responseText;
         }
 
-        if(/^text\/html.*/.test(ct)) {
+        if(/^text\/html[;.*]/.test(ct)) {
           var modal = new Modal(null, {
             iframe: {
               content: this.responseText
@@ -158,4 +189,6 @@ module.exports.initApiForm = initApiForm;
 document.addEventListener('DOMContentLoaded', function() {
   initLabels();
   initApiForm();
+
+  document.querySelector('form[data-focus] input:not([hidden])').focus();
 });
