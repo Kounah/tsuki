@@ -24,7 +24,7 @@ module.exports.init = async function init(app) {
   if(typeof app === 'undefined')
     throw new TypeError('\'app\' is not defined');
 
-  if(config.apis.user) user.router(app);
+  if(config.apis.v1.user) user.router(app);
 };
 
 module.exports.user = user;

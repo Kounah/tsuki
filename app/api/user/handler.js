@@ -1,8 +1,8 @@
 const auth = require('../../lib/auth');
 const error = require('../../lib/error');
 const Handler = require('../../lib/handler');
-const core = require('./core');
 const config = require('../../config');
+const core = require('./core');
 
 /**
  * user handler
@@ -105,5 +105,16 @@ module.exports.register = new Handler({
     invert: true
   }))
   .register(async (req, res) => {
+    // required props
+    if(typeof req.body !== 'object' || req.body === null)
+      throw new TypeError('\'req.body\' was not an object');
 
+    let user = core.create(req.body, {
+      plainPassword: typeof req.body.plainPassword !== 'undefined' && Boolean(req.body.plainPassword)
+    });
+
+    req.session.user = user;
+    if(typeof req.body.redirecturl === 'string')
+      res.redirect(req.body.redirectUrl);
+    else res.redirect('/account');
   });

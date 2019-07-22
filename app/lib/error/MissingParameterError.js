@@ -4,8 +4,8 @@ const RequestError = require('./RequestError');
  * @typedef {Object} Parameter
  * @property {string} name the name of the parameter
  * @property {string} description the parameters description
- * @property {string} location the parameters location
- * @property {('body'|'query'|'path')} type the type of the parameter
+ * @property {('body'|'query'|'path')} location the parameters location
+ * @property {string} type the type of the parameter
  */
 
 /**

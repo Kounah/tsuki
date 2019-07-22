@@ -6,6 +6,7 @@
  */
 
 const User = require('./model');
+const validation = require('./validation');
 // eslint-disable-next-line no-unused-vars
 const mongoose = require('mongoose');
 const crypto = require('crypto');
@@ -35,8 +36,14 @@ module.exports.create = async function create(properties, options) {
   delete properties._created;
   delete properties._updated;
 
+  let loginValidity = validation.login(properties.login);
+  if(!loginValidity.valid) throw new Error(loginValidity.message);
+
   if(typeof options == 'object') {
     if(typeof options.plainPassword == 'boolean' && options.plainPassword) {
+      let passwordValidity = validation.password(properties.password);
+      if(!passwordValidity.valid) throw new Error(passwordValidity.message);
+
       properties.password = crypto.createHash('sha512')
         .update(properties.password)
         .digest('hex');
@@ -50,10 +57,10 @@ module.exports.create = async function create(properties, options) {
 };
 
 /**
- * validates if the given username/password combination exists
+ * validates if the given login/password combination exists
  * @param {Object} params
  * @param {String} params.email the users E-Mail address
- * @param {String} params.username the Users login name
+ * @param {String} params.login the Users login name
  * @param {String} params.password hex digested sha512 hash of the password\
  * can be plain text when the option `plainPassword` is set
  * @param {Object} options
@@ -72,7 +79,7 @@ module.exports.validate = async function validate(params, options) {
 
   let q = User.findOne({
     $or: [{
-      username: params.username,
+      login: params.login,
       password: params.password
     }, {
       email: params.email,

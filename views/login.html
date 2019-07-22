@@ -8,7 +8,14 @@ Welcome
 <script src="/src/lib/js/form.js?compile{{'&nocache' if nocache}}"></script>
 <script>
 function validateUsername(el) {
-  return typeof el.value == 'string' && !/^[\s]*$/.test(el.value) && el.value.length > 0;
+  let pat = RegExp('{{ api.v1.user.validation.login["pattern"] }}'),
+      min = Number('{{ api.v1.user.validation.login["min-length"] }}'),
+      max = Number('{{ api.v1.user.validation.login["max-length"] }}');
+
+  return typeof el.value == 'string'
+  && el.value.length >= min
+  && el.value.length <= max
+  && pat.test(el.value);
 }
 
 function validatePassword(el) {

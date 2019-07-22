@@ -175,13 +175,16 @@ module.exports.credentials = {
   },
 };
 
+// enable or disable apis
 module.exports.apis = {
-  /**@type {Boolean} */
-  user: setting({
-    key: 'apis.user',
-    def: true,
-    mod: val => Boolean(val)
-  })
+  v1: {
+    /**@type {Boolean} */
+    user: setting({
+      key: 'apis.v1.user',
+      def: true,
+      mod: val => Boolean(val)
+    })
+  }
 };
 
 module.exports.api = {

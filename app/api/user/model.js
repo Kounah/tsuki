@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const permissions = require('./permissions');
+const validation = require('./validation');
 
 /**
  * user model
@@ -10,17 +11,18 @@ const permissions = require('./permissions');
 
 /**
  * @typedef {Object} UserProperties
- * @property {String} username the login name used to login
- * @property {String} password the sha512 hash of the password
- * @property {String} email the Users email address
- * @property {Object} name
- * @property {String} name.first
- * @property {Array.<String>} name.middle
- * @property {String} name.last
- * @property {Array.<permissions.Key>} permissions
- * @property {mongoose.Types.ObjectId} _id
- * @property {Date} _created
- * @property {Date} _updated
+ * @prop {String} login the login name used to login
+ * @prop {String} password the sha512 hash of the password
+ * @prop {String} email the Users email address
+ * @prop {Object} name
+ * @prop {String} name.first
+ * @prop {Array.<String>} name.middle
+ * @prop {String} name.last
+ * @prop {Array.<permissions.Key>} permissions
+ * @prop {Boolean} verified
+ * @prop {mongoose.Types.ObjectId} _id
+ * @prop {Date} _created
+ * @prop {Date} _updated
  */
 
 let schema = new mongoose.Schema({
@@ -29,10 +31,8 @@ let schema = new mongoose.Schema({
     required: [true, 'Users require a login name'],
     unique: [true, 'login is a unique property'],
     validator: function(v, cb) {
-      let pattern = /^[a-zA-Z]+[-_a-zA-Z0-9]*$/gm;
-      let msg = v + ' is not a valid login.'
-        + 'It shold match the following pattern ' + pattern;
-      cb(pattern.test(v), msg);
+      let validity = validation.login(v);
+      cb(validity.valid, validity.message);
     }
   },
   password: {
@@ -72,7 +72,11 @@ let schema = new mongoose.Schema({
   permissions: [{
     type: String,
     enum: Object.keys(permissions.keys)
-  }]
+  }],
+  verified: {
+    type: Boolean,
+    default: false
+  }
 }, {
   timestamps: {
     createdAt: '_created',

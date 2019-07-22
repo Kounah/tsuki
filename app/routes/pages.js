@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 const express = require('express');
 const error = require('../lib/error');
-const {pages, templates} = require('../config');
+const {pages, templates, api} = require('../config');
 
 /**
  * handles a disabled config
@@ -46,7 +46,8 @@ function handleRender(name, extender) {
     let o = {
       session: req.session,
       nocache: templates['use-no-cache'],
-      validation: templates.validation
+      validation: templates.validation,
+      api: api
     };
 
     if(typeof extender == 'function') {
