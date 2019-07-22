@@ -73,6 +73,10 @@ module.exports.server = {
       secure: setting('server.session.cookie.secure', true, val => Boolean(val)),
       'max-age': setting('server.session.cookie.max-age', null, val => eval(val))
     }
+  },
+  security: {
+    'print-session': setting('server.security.print-session', false, val => Boolean(val)),
+    'print-session-json': setting('server.security.print-session-json', false, val => Boolean(val)),
   }
 };
 
