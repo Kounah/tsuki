@@ -26,7 +26,7 @@ function handleCheck(options) {
     let authorization = req.headers['authorization']
       || req.body['__authorization']
       || req.query['__authorization'];
-  
+
     let data = authorization.split(' ');
     let method = data.shift();
 
@@ -35,7 +35,7 @@ function handleCheck(options) {
      * if there is no header (or authorization body/query parameter) given and `options.invert`
      * is `true` the request will be rejected with an `ForbiddenActionError`
      */
-    if(typeof options === 'object' && options !== null 
+    if(typeof options === 'object' && options !== null
     && typeof options.invert == 'boolean'
     && Boolean(options.invert)) {
       if(!/^[\s]*$/.test(method) && data.length > 0) {
@@ -45,13 +45,13 @@ function handleCheck(options) {
         });
       } else next();
     }
-  
+
     if(method == 'Basic') {
       let credentials = Buffer.from(data.shift(), 'base64').toString('utf8').split(':');
-  
+
       let login = credentials.shift();
       let password = credentials.shift();
-  
+
       let valid = await user.api.validate({
         email: login,
         username: login,
@@ -59,7 +59,7 @@ function handleCheck(options) {
       }, {
         plainPassword: true
       });
-  
+
       if(valid) {
         req.user = await user.api.findOne({
           email: login,
@@ -144,7 +144,7 @@ module.exports.reject = reject;
 
 /**
  * gets the content of the session using the config
- * @param {Object} session 
+ * @param {Object} session
  */
 function sessionContent(session) {
   config.server.security['print-session']
@@ -154,67 +154,113 @@ function sessionContent(session) {
     : 'for security reasons, sessions willl not be printed';
 }
 
+/**
+ *
+ * @param {Object} options additional options
+ * @param {Boolean} options.invert
+ */
 function handleSession(options) {
+  // shorten the code by saving the test for options.invert in a local var
+  let _invert = typeof options === 'object' && options !== null
+    && typeof options.invert !== 'undefined' && Boolean(options.invert);
+
   /**
    * handles session authorization
-   * @param {express.Request} req 
-   * @param {express.Response} res 
-   * @param {() => void} next 
+   * @param {express.Request} req
+   * @param {express.Response} res
+   * @param {() => void} next
    */
   return async function check(req, res, next) {
     // type check for req.session
     if(typeof req.session !== 'object' || req.session === null) {
-      // 
+      // req session is non null object
+      // checking for req.session.user
       if(typeof req.session.user !== 'object' || req.session.user === null || req.session.user instanceof user.model) {
-        let u = await user.core.byLoginPassword(req.session.user.login, req.session.user.password, {plainPassword: false});
+        // req.session.user is non null object and instance of user.model
+        // get u from database for validation
+        let u = await user.core.byLoginPassword(req.session.user.login, req.session.user.password, {plainPassword: false})
+          || await user.core.findOne({_id: req.session.user._id});
 
+        // check for u
         if(typeof u === 'object' && u !== null) {
-          if(typeof options === 'object' && options !== null
-          && typeof options.invert === 'boolean' && Boolean(options.invert)) {
+          // u is non null object
+          // req.session.user is a valid user, u being not null confirms that
+
+          // updating req.session.user
+          req.session.user = u;
+
+          // handle options.invert
+          if(_invert) {
+            // iverting the checks result by throwing an ForbiddenActionError
             throw new error.ForbiddenActionError({
               action: req.method + ' ' + req.path,
               reason: 'This call requires you not to have any authorization in the session',
             });
-          } else next();
-        } else {
-          if(typeof options === 'object' && options !== null
-          && typeof options.invert === 'boolean' && Boolean(options.invert)) {
+          } else {
+            // it is a valid session -> continue
             next();
-          } else throw new error.UnauthorizedError({
+          }
+        } else {
+          // u was either not an object or null
+          // -> mongodb did not have a user with this sessions user._id
+          // -> session is invalid
+
+          // delete session.user
+          delete req.session.user;
+
+          // handle options.invert
+          if(_invert) {
+            // inverting the checks result by continuing
+            next();
+          } else {
+            // throw an UnauthorizedError
+            throw new error.UnauthorizedError({
+              authorization: {
+                method: 'Session',
+                content: sessionContent(req.session),
+                raw: 'N/A'
+              },
+              inner: new TypeError('\'u\' is not an object')
+            });
+          }
+        }
+      } else {
+        // req.session.user is either not an object or null
+        // there is no login in the session
+
+        // handle options.invert
+        if(_invert) {
+          // invalid session and invert, continue
+          next();
+        } else {
+          // invalid session and not invert, throw
+          throw new error.UnauthorizedError({
             authorization: {
               method: 'Session',
               content: sessionContent(req.session),
               raw: 'N/A'
             },
-            inner: new TypeError('\'u\' (the user retrieved checked by session users login and password) is not an object')
+            inner: new TypeError('\'req.session.user\' is not an User')
           });
         }
+      }
+    } else {
+      // req.session is either not an object or null
+      if(_invert) {
+        // invalid session and invert, continue
+        next();
       } else {
-        if(typeof options === 'object' && options !== null
-        && typeof options.invert === 'boolean' && Boolean(options.invert)) {
-          next();
-        } else throw new error.UnauthorizedError({
+        // invalid session and not invert, throw
+        throw new error.UnauthorizedError({
           authorization: {
             method: 'Session',
             content: sessionContent(req.session),
             raw: 'N/A'
           },
-          inner: new TypeError('\'req.session.user\' is not an User')
+          inner: new TypeError('\'req.session\' is not an object')
         });
       }
-    } else {
-      if(typeof options === 'object' && options !== null
-      && typeof options.invert === 'boolean' && Boolean(options.invert)) {
-        next();
-      } else throw new error.UnauthorizedError({
-        authorization: {
-          method: 'Session',
-          content: sessionContent(req.session),
-          raw: 'N/A'
-        },
-        inner: new TypeError('\'req.session\' is not an object')
-      });
-    } 
+    }
   };
 }
 module.exports.handleSession = handleSession;
