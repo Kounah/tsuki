@@ -20,9 +20,8 @@ module.exports.create = new Handler({
   path: '/user',
   method: 'POST'
 })
-  .register(error.handler, {unshift: true})
   .register(auth.handleCheck)
-  .register(async (req, res) => {
+  .registerAsync(async (req, res) => {
     let user = await core.create(req.body, {
       plainPassword: typeof req.query.plainPassword == 'string'
     });
@@ -49,13 +48,12 @@ module.exports.login = new Handler({
   path: '/user/login',
   method: 'POST'
 })
-  .register(error.handler, {unshift: true})
   .register(auth.handleSession({
     invert: true
   }))
-  .register(async (req, res) => {
+  .registerAsync(async (req, res) => {
     if(typeof req.body !== 'object')
-      throw new TypeError('\'body\' is not');
+      throw new TypeError('\'body\' is not an object');
 
     let plainPassword = true;
     if(typeof req.body.plainPassword !== 'undefined')
@@ -70,7 +68,8 @@ module.exports.login = new Handler({
           description: 'the user\'s name or email',
           location: 'body'
         },
-        value: req.body.login
+        value: req.body.login,
+        inner: new TypeError('\'req.body.login\' was not a string')
       });
 
     if(typeof req.body.password !== 'string')
@@ -81,7 +80,8 @@ module.exports.login = new Handler({
           description: 'the user\'s password',
           location: 'body'
         },
-        value: req.body.password
+        value: req.body.password,
+        inner: new TypeError('\'req.body.password\' was not a string')
       });
 
     let user = await core.byLoginPassword(req.body.login, req.body.password, {
@@ -100,11 +100,10 @@ module.exports.register = new Handler({
   path: '/user/register',
   method: 'POST'
 })
-  .register(error.handler, {unshift: true})
-  .register(auth.handler({
+  .register(auth.handleSession({
     invert: true
   }))
-  .register(async (req, res) => {
+  .registerAsync(async (req, res) => {
     // required props
     if(typeof req.body !== 'object' || req.body === null)
       throw new TypeError('\'req.body\' was not an object');
@@ -117,4 +116,22 @@ module.exports.register = new Handler({
     if(typeof req.body.redirecturl === 'string')
       res.redirect(req.body.redirectUrl);
     else res.redirect('/account');
+  });
+
+module.exports.logout = new Handler({
+  enabled: config.api.v1.user.logout,
+  path: '/user/logout',
+  method: 'POST'
+})
+  .register(auth.handleSession())
+  .register((req, res) => {
+    if(typeof req.body !== 'object' || req.body === null)
+      throw new TypeError('\'req.body\' was not an object');
+
+    req.session.user = null;
+    delete req.session.user;
+
+    if(typeof req.body.redirectUrl === 'string' && Boolean(req.body.redirectUrl))
+      res.redirect(req.body.redirectUrl);
+    else res.redirect('/');
   });

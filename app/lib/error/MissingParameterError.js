@@ -29,7 +29,7 @@ module.exports = class MissingParameterError extends RequestError {
 
     super({
       status: 400,
-      message: `The parameter '${params.parameter.name}' was either missing in ${params.parameter.location} or it's type was not ${params.parameter.type}.\nDescription: ${params.parameter.description}\nValue: ${params.value}`,
+      message: `The parameter '${params.parameter.name}' was either missing in ${params.parameter.location} or it's type was not ${params.parameter.type}.`,
       inner: params.inner
     });
 
@@ -37,5 +37,6 @@ module.exports = class MissingParameterError extends RequestError {
     this.parameter = params.parameter;
     /**@type {*} */
     this.value = params.value;
+    this.typeofValue = typeof params.value;
   }
 };

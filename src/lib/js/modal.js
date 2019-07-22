@@ -220,11 +220,17 @@ function Modal(el, options) {
 
     if(typeof options.iframe == 'object') {
       var iframe = document.createElement('iframe');
+
       if(options.iframe.src) {
         iframe.src = options.iframe.src;
       } else if(options.iframe.content) {
         iframe.src = 'data:text/html; base64,' + btoa(options.iframe.content);
       }
+
+      iframe.addEventListener('load', function() {
+        iframe.width  = iframe.contentWindow.document.body.scrollWidth;
+        iframe.height = iframe.contentWindow.document.body.scrollHeight;
+      });
       content.appendChild(iframe);
     }
 

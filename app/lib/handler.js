@@ -1,6 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 const express = require('express');
 const error = require('./error');
+const amw = require('./async-middleware');
 
 /**
  * @typedef {(req: express.Request, res: express.Response, next: function) => void} HandlerFunction
@@ -41,15 +42,16 @@ module.exports = class Handler {
     this.enabled = this.enabled.bind(this);
 
     this.register = this.register.bind(this);
+    this.registerAsync = this.registerAsync.bind(this);
     this.attach = this.attach.bind(this);
 
-    this.register((req, res, next) => {
+    this.register(function handleEnabled(req, res, next) {
       if(this._enabled) next();
       else throw new error.ForbiddenActionError({
         action: `${this._method} ${this._prefix}${this._path}`,
         reason: 'this route has been disabled by configuration'
       });
-    });
+    }.bind(this));
   }
 
   /**
@@ -121,6 +123,20 @@ module.exports = class Handler {
     }
 
     this.handlers.push(fn);
+    return this;
+  }
+
+  /**
+   * registers a new handler (at the end of the execution chain) and wraps it
+   * inside of a async-middleware
+   * @param {HandlerFunction} fn
+   * @param {Object} options
+   * @param {HandlerFunction} options.before
+   * @param {HandlerFunction} options.after
+   * @param {Boolean} options.unshift append the function at the beginning
+   */
+  registerAsync(fn, options) {
+    this.register(amw(fn), options);
     return this;
   }
 

@@ -16,5 +16,7 @@ const config = require('../../config');
  * @param {express.Application} app the express app
  */
 module.exports = function router(app) {
-  handler.create.prefix(config.api.v1.prefix).attach(app);
+  Array.from(Object.entries(handler))
+    .map(entry => entry[1])
+    .forEach(handler => handler.prefix(config.api.v1.prefix).attach(app));
 };

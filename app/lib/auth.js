@@ -8,6 +8,7 @@ const express = require('express');
 const error = require('./error');
 const user = require('../api/user');
 const config = require('../config');
+const amw = require('./async-middleware');
 
 /**
  * generates a express request handler function using `options`
@@ -21,7 +22,7 @@ function handleCheck(options) {
    * @param {express.Response} res the express response
    * @param {() => void} next the next function
    */
-  return async function check(req, res, next) {
+  return amw(async function check(req, res, next) {
     /**@type {String} */
     let authorization = req.headers['authorization']
       || req.body['__authorization']
@@ -99,9 +100,9 @@ function handleCheck(options) {
         }
       });
     }
-  };
+  });
 }
-module.exports.handleCheckHeader = handleCheck;
+module.exports.handleCheck = handleCheck;
 
 /**
  * reject a request and request authorization
@@ -170,7 +171,7 @@ function handleSession(options) {
    * @param {express.Response} res
    * @param {() => void} next
    */
-  return async function check(req, res, next) {
+  return amw(async function check(req, res, next) {
     // type check for req.session
     if(typeof req.session !== 'object' || req.session === null) {
       // req session is non null object
@@ -198,7 +199,7 @@ function handleSession(options) {
             });
           } else {
             // it is a valid session -> continue
-            next();
+            return next();
           }
         } else {
           // u was either not an object or null
@@ -211,7 +212,7 @@ function handleSession(options) {
           // handle options.invert
           if(_invert) {
             // inverting the checks result by continuing
-            next();
+            return next();
           } else {
             // throw an UnauthorizedError
             throw new error.UnauthorizedError({
@@ -231,7 +232,7 @@ function handleSession(options) {
         // handle options.invert
         if(_invert) {
           // invalid session and invert, continue
-          next();
+          return next();
         } else {
           // invalid session and not invert, throw
           throw new error.UnauthorizedError({
@@ -248,7 +249,7 @@ function handleSession(options) {
       // req.session is either not an object or null
       if(_invert) {
         // invalid session and invert, continue
-        next();
+        return next();
       } else {
         // invalid session and not invert, throw
         throw new error.UnauthorizedError({
@@ -261,7 +262,7 @@ function handleSession(options) {
         });
       }
     }
-  };
+  });
 }
 module.exports.handleSession = handleSession;
 
@@ -285,7 +286,7 @@ module.exports.handler = function handler(options) {
    * @param {express.Response} res
    * @param {() => void} next
    */
-  return async function(req, res, next) {
+  return amw(async function(req, res, next) {
     return await new Promise(resolve => {
       if(typeof options.session === 'object' && options.session !== null && Boolean(options.session))
         handleSession({
@@ -303,5 +304,5 @@ module.exports.handler = function handler(options) {
           next();
         });
     });
-  };
+  });
 };

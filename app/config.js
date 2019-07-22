@@ -1,5 +1,6 @@
 const process = require('process');
 const ucfg = require('./user-config');
+const pregex = require('./lib/parse-regular-expression');
 
 let uconfig = ucfg.load();
 
@@ -15,6 +16,8 @@ function jsonpath(o, ...path) {
     return undefined;
   }
 }
+
+module.exports.__keys = [];
 
 /**
  * handles the settings
@@ -38,6 +41,13 @@ function setting(params) {
     params.def;
   if(typeof params.mod === 'function')
     val = params.mod(val);
+
+  module.exports.__keys.push({
+    key: params.key,
+    def: params.def,
+    val: val,
+    mod: params.mod
+  });
   return val;
 }
 
@@ -94,7 +104,7 @@ module.exports.server = {
     mod: val => Number(val)
   }),
   'response-delay': setting({
-    key: 'server.request-delay',
+    key: 'server.response-delay',
     def: 0,
     mod: val => Number(val)
   }),
@@ -198,17 +208,26 @@ module.exports.api = {
       create: setting({
         key: 'api.v1.user.create',
         def: true,
-        mod: val => Boolean(val)}),
+        mod: val => Boolean(val)
+      }),
       /**@type {Boolean} */
       login: setting({
         key: 'api.v1.user.login',
         def: true,
-        mod: val => Boolean(val)}),
+        mod: val => Boolean(val)
+      }),
       /**@type {Boolean} */
       register: setting({
         key: 'api.v1.user.register',
         def: true,
-        mod: val => Boolean(val)}),
+        mod: val => Boolean(val)
+      }),
+      /**@type {Boolean} */
+      logout: setting({
+        key: 'api.v1.user.logout',
+        def: true,
+        mod: val => Boolean(val)
+      }),
 
       validation: {
         login: {
@@ -216,7 +235,7 @@ module.exports.api = {
           'pattern': setting({
             key: 'api.v1.user.validation.login.pattern',
             def: /^[a-zA-Z]+[-_a-zA-Z0-9]*$/gm,
-            mod: val => RegExp(val)
+            mod: pregex
           }),
           /**@type {Number} */
           'min-length': setting({
@@ -235,8 +254,8 @@ module.exports.api = {
           /**@type {RegExp} */
           'pattern': setting({
             key: 'api.v1.user.validation.password.pattern',
-            def: /^.*$/gm,
-            mod: val => RegExp(val)
+            def: /^.*$/,
+            mod: pregex
           }),
           /**@type {Number} */
           'min-length': setting({
@@ -300,6 +319,7 @@ module.exports.templates = {
     mod: val => Boolean(val)
   }),
 };
-console.log('config:', module.exports);
+
+// console.log('config:', module.exports);
 
 ucfg.create(module.exports);

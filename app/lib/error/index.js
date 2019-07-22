@@ -46,22 +46,20 @@ function handle(err) {
 
 /**
  * creates a handler that sends a Request Error to the response
+ * @param {Error} err
  * @param {Express.Request} req express request
  * @param {Express.Response} res express response
- * @param {() => void} next
+ * @param {(err: Error) => void} next
  */
-function handler(req, res, next) {
-  try {
-    if(typeof next == 'function') {
-      next();
-    }
-  } catch(err) {
-    let handled = handle(err);
-    res
-      .status(handled.status)
-      .set('Error-Type', handled.constructor.name)
-      .json(handled);
-  }
+function handleError(err, req, res, next) {
+  let handled = handle(err);
+
+  console.error(handled.message, handled);
+
+  res
+    .status(handled.status)
+    .set('Error-Type', handled.constructor.name)
+    .json(handled);
 }
 
 async function handleAsyncResult(v, depth) {
@@ -92,6 +90,6 @@ module.exports = {
   UnauthorizedError,
 
   handle,
-  handler,
+  handler: handleError,
   handleAsyncResult
 };

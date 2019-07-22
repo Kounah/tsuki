@@ -38,8 +38,8 @@ let rl = readline.createInterface({
   console.log('connected to database');
 
   console.log('checking for admin user');
-  if(!await user.api.exists({login: 'admin'})) {
-    let created = await user.api.create({
+  if(!await user.core.exists({login: 'admin'})) {
+    let created = await user.core.create({
       login: 'admin',
       password: await new Promise(resolve => {
         rl.question('set new admin password: ', data => {
@@ -48,7 +48,7 @@ let rl = readline.createInterface({
         });
         mute();
       }),
-      permissions: Object.keys(require('../app/api/user/permissions'))
+      permissions: Object.keys(require('../app/api/user/permissions').keys)
     }, {
       plainPassword: true
     });

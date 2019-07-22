@@ -2,12 +2,14 @@ const path = require('path');
 const express = require('express');
 const session = require('express-session');
 const nunjucks = require('nunjucks');
+const bodyParser = require('body-parser');
 // eslint-disable-next-line no-unused-vars
 const http = require('http');
 const conf = require('./app/config').server;
 const nunconf = require('./app/config').nunjucks;
 const api = require('./app/api');
 const router = require('./app/routes');
+const error = require('./app/lib/error');
 
 /**
  * Module Server
@@ -33,6 +35,30 @@ if(typeof conf['response-delay'] == 'number' && conf['response-delay'] > 0) {
     setTimeout(() => { _end.call(this, ...p); }, conf['response-delay']);
   };
 }
+
+// CORS
+app.use((req, res, next) => {
+  res.set('Access-Control-Allow-Origin', '*');
+  try {
+    return next();
+  } catch(err) {
+    return next(err);
+  }
+});
+
+// body-parser
+app.use(bodyParser.json({
+  type: 'application/json'
+}));
+app.use(bodyParser.urlencoded({
+  extended: true,
+  type: 'application/x-www-form-urlencoded'
+}));
+
+app.use((req, res, next) => {
+  console.log(req.body);
+  next();
+});
 
 app.use(session({
   secret: conf.session.secret,
@@ -61,8 +87,10 @@ module.exports.start = function start() {
 
     console.log('initializing api');
     api.init(app).then(() => {
+      app.use(error.handler);
       console.log('initialized api');
     });
+
 
     server.on('connection', (socket) => {
       socket.on('data', chunk => {

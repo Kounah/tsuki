@@ -8,7 +8,7 @@ Welcome
 <script src="/src/lib/js/form.js?compile{{'&nocache' if nocache}}"></script>
 <script>
 function validateUsername(el) {
-  let pat = RegExp('{{ api.v1.user.validation.login["pattern"] }}'),
+  let pat = lib.pregex('{{ api.v1.user.validation.login["pattern"] }}'),
       min = Number('{{ api.v1.user.validation.login["min-length"] }}'),
       max = Number('{{ api.v1.user.validation.login["max-length"] }}');
 
@@ -26,7 +26,7 @@ function validatePassword(el) {
 
 {% block content %}
 <div class="col center">
-  <form class="box api" action="/api/v1/user/login" method="POST" data-focus>
+  <form class="box api" action="/api/v1/user/login" method="POST" enctype="application/json" data-focus>
     <div class="progress minimal opacity-hide no-margin">
       <div class="inner"></div>
     </div>
@@ -37,8 +37,8 @@ function validatePassword(el) {
 
     <div class="col">
       <div class="input-field">
-        <label for="login-input-username">Username</label>
-        <input type="text" name="username" id="login-input-username" autocomplete="username" tabindex="0" validate="validateUsername(this)">
+        <label for="login-input-username">Login</label>
+        <input type="text" name="login" id="login-input-username" autocomplete="username" tabindex="0" validate="validateUsername(this)">
         <span class="validation">The username must not be empty.</span>
       </div>
 

@@ -120,7 +120,11 @@ function initApiForm() {
 
       if(!valid) return;
 
-      if(form.enctype === 'application/json') {
+      console.log(form.enctype);
+
+      xhr.open(form.method, form.action);
+
+      if(form.getAttribute('enctype') === 'application/json') {
         data = JSON.stringify(data);
         xhr.setRequestHeader('Content-Type', 'application/json');
       } else {
@@ -166,7 +170,7 @@ function initApiForm() {
             onsuccess.call(form, rb);
           }
         } else {
-          console.error(form.method + ' ' + form.action + ':', rb);
+          console.error(form.method.toUpperCase() + ' ' + form.action + ':\n', rb.message, '\n', rb);
 
           if(typeof onfail === 'function') {
             onfail.call(form, rb);
@@ -179,7 +183,6 @@ function initApiForm() {
         progress.val(ev.loaded);
       });
 
-      xhr.open(form.method, form.action);
       xhr.send(data);
     });
   });
