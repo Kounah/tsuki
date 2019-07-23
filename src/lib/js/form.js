@@ -120,9 +120,8 @@ function initApiForm() {
 
       if(!valid) return;
 
-      console.log(form.enctype);
-
       xhr.open(form.method, form.action);
+      xhr.withCredentials = true;
 
       if(form.getAttribute('enctype') === 'application/json') {
         data = JSON.stringify(data);
@@ -140,6 +139,8 @@ function initApiForm() {
       });
 
       xhr.addEventListener('load', function() {
+        console.log(this.getAllResponseHeaders());
+
         // content type
         var ct = this.getResponseHeader('Content-Type');
 
@@ -150,6 +151,9 @@ function initApiForm() {
         } else {
           rb = this.responseText;
         }
+
+        console.log(rb);
+
 
         if(/^text\/html[;.*]/.test(ct)) {
           var modal = new Modal(null, {

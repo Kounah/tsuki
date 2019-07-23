@@ -29,7 +29,7 @@ module.exports = class UnauthorizedError extends RequestError {
 
     super({
       message: 'Your request was missing valid authorization.' +
-        `Got method='${params.authorization.method}' content='${params.authorization.content}'`,
+        ` Got method='${params.authorization.method}' content='${params.authorization.content}'`,
       status: 401,
       inner: params.inner
     });

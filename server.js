@@ -55,11 +55,6 @@ app.use(bodyParser.urlencoded({
   type: 'application/x-www-form-urlencoded'
 }));
 
-app.use((req, res, next) => {
-  console.log(req.body);
-  next();
-});
-
 app.use(session({
   secret: conf.session.secret,
   resave: conf.session.resave,
@@ -69,6 +64,11 @@ app.use(session({
     maxAge: conf.session.cookie['max-age']
   }
 }));
+
+app.use((req, res, next) => {
+  console.log(req.session);
+  next();
+});
 
 nunjucks.configure(path.join(__dirname, 'views'), {
   autoescape: nunconf.autoescape,

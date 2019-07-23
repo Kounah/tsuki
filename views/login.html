@@ -8,9 +8,9 @@ Welcome
 <script src="/src/lib/js/form.js?compile{{'&nocache' if nocache}}"></script>
 <script>
 function validateUsername(el) {
-  let pat = lib.pregex('{{ api.v1.user.validation.login["pattern"] }}'),
-      min = Number('{{ api.v1.user.validation.login["min-length"] }}'),
-      max = Number('{{ api.v1.user.validation.login["max-length"] }}');
+  let pat = lib.pregex('{{ api.v1.user.validation.username["pattern"] }}'),
+      min = Number('{{ api.v1.user.validation.username["min-length"] }}'),
+      max = Number('{{ api.v1.user.validation.username["max-length"] }}');
 
   return typeof el.value == 'string'
   && el.value.length >= min
@@ -19,7 +19,14 @@ function validateUsername(el) {
 }
 
 function validatePassword(el) {
-  return typeof el.value == 'string' && el.value.length >= Number('{{ validation["user-min-pwd-length"] }}');
+  let pat = lib.pregex('{{ api.v1.user.validation.password["pattern"] }}'),
+      min = Number('{{ api.v1.user.validation.password["min-length"] }}'),
+      max = Number('{{ api.v1.user.validation.password["max-length"] }}');
+
+  return typeof el.value == 'string'
+  && el.value.length >= min
+  && el.value.length <= max
+  && pat.test(el.value);
 }
 </script>
 {% endblock scripts %}
@@ -33,7 +40,8 @@ function validatePassword(el) {
 
     <span class="title">Login</span>
 
-    <input type="text" hidden class="hidden" value="{{ returnURL }}">
+    <input type="text" name="returnUrl" hidden class="hidden" value="{{ returnURL }}">
+    <input type="checkbox" name="plainPassword" hidden class="hidden" checked />
 
     <div class="col">
       <div class="input-field">

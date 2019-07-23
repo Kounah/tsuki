@@ -3,6 +3,7 @@ const error = require('../../lib/error');
 const Handler = require('../../lib/handler');
 const config = require('../../config');
 const core = require('./core');
+const model = require('./model');
 
 /**
  * user handler
@@ -59,7 +60,6 @@ module.exports.login = new Handler({
     if(typeof req.body.plainPassword !== 'undefined')
       plainPassword = Boolean(req.body.plainPassword);
 
-
     if(typeof req.body.login !== 'string')
       throw new error.MissingParameterError({
         parameter: {
@@ -88,11 +88,19 @@ module.exports.login = new Handler({
       plainPassword: plainPassword
     });
 
-    req.session.user = user;
+    if(typeof user === 'object' && user !== null && user instanceof model) {
+      req.session.user = user;
 
-    if(typeof req.body.redirectUrl === 'string')
-      res.redirect(req.body.redirectUrl);
-    else res.redirect('/account');
+      if(typeof req.body.redirectUrl === 'string')
+        res.redirect(req.body.redirectUrl);
+      else res.status(200)
+        .redirect('/account');
+    } else throw new error.UnauthorizedError({
+      authorization: {
+        method: 'session'
+      },
+      inner: new Error('incorrect username/password')
+    });
   });
 
 module.exports.register = new Handler({

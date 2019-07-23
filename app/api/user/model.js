@@ -11,7 +11,7 @@ const validation = require('./validation');
 
 /**
  * @typedef {Object} UserProperties
- * @prop {String} login the login name used to login
+ * @prop {String} username the username (used to display and login)
  * @prop {String} password the sha512 hash of the password
  * @prop {String} email the Users email address
  * @prop {Object} name
@@ -26,12 +26,12 @@ const validation = require('./validation');
  */
 
 let schema = new mongoose.Schema({
-  login: {
+  username: {
     type: String,
-    required: [true, 'Users require a login name'],
-    unique: [true, 'login is a unique property'],
+    required: [true, 'Users require a username'],
+    unique: [true, 'username is a unique property'],
     validator: function(v, cb) {
-      let validity = validation.login(v);
+      let validity = validation.validateUsername(v);
       cb(validity.valid, validity.message);
     }
   },
@@ -55,7 +55,7 @@ let schema = new mongoose.Schema({
       type: String,
       required: true,
       default: function() {
-        return this.login;
+        return this.username;
       }
     },
     middle: [{
@@ -65,7 +65,7 @@ let schema = new mongoose.Schema({
       type: String,
       required: true,
       default: function() {
-        return this.login;
+        return this.username;
       }
     }
   },

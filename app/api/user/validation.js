@@ -7,27 +7,27 @@ const config = require('../../config');
  */
 
 /**
- * @param {String} login
+ * @param {String} username
  * @returns {ValidationResult}
  */
-module.exports.login = function validateLogin(login) {
-  if(typeof login !== 'string' || !login) return ({
+module.exports.username = function validateUsername(username) {
+  if(typeof username !== 'string' || !username) return ({
     valid: false,
-    message: '\'login\' was not a string'
+    message: '\'username\' was not a string'
   });
 
-  let pat = config.api.v1.user.validation.login['pattern'],
-    min = config.api.v1.user.validation.login['min-length'],
-    max = config.api.v1.user.validation.login['max-length'];
+  let pat = config.api.v1.user.validation.username['pattern'],
+    min = config.api.v1.user.validation.username['min-length'],
+    max = config.api.v1.user.validation.username['max-length'];
 
-  let message = '\'' + login + '\' is not a valid login. \n'
+  let message = '\'' + username + '\' is not a valid username. \n'
     + 'It shold match the following pattern ' + pat + ' '
     + 'and it should have between ' + min + ' and ' + max + ' characters.';
 
   return ({
-    valid: login.length >= min
-      && login.length <= max
-      && pat.test(login),
+    valid: username.length >= min
+      && username.length <= max
+      && pat.test(username),
     message
   });
 };

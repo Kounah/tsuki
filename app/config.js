@@ -129,7 +129,7 @@ module.exports.server = {
     /**@type {Boolean} */
     'resave': setting({
       key: 'server.session.resave',
-      def: false,
+      def: true,
       mod: val => Boolean(val)
     }),
     /**@type {Boolean} */
@@ -230,22 +230,22 @@ module.exports.api = {
       }),
 
       validation: {
-        login: {
+        username: {
           /**@type {RegExp} */
           'pattern': setting({
-            key: 'api.v1.user.validation.login.pattern',
+            key: 'api.v1.user.validation.username.pattern',
             def: /^[a-zA-Z]+[-_a-zA-Z0-9]*$/gm,
             mod: pregex
           }),
           /**@type {Number} */
           'min-length': setting({
-            key: 'api.v1.user.validation.login.min-length',
+            key: 'api.v1.user.validation.username.min-length',
             def: 4,
             mod: val => Number(val)
           }),
           /**@type {Number} */
           'max-length': setting({
-            key: 'api.v1.user.validation.login.max-length',
+            key: 'api.v1.user.validation.username.max-length',
             def: 20,
             mod: val => Number(val)
           })

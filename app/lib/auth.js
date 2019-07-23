@@ -179,11 +179,10 @@ function handleSession(options) {
       if(typeof req.session.user !== 'object' || req.session.user === null || req.session.user instanceof user.model) {
         // req.session.user is non null object and instance of user.model
         // get u from database for validation
-        let u = await user.core.byLoginPassword(req.session.user.login, req.session.user.password, {plainPassword: false})
-          || await user.core.findOne({_id: req.session.user._id});
+        let u = await user.core.byLoginPassword(req.session.user.email || req.session.user.login, req.session.user.password, {plainPassword: false});
 
         // check for u
-        if(typeof u === 'object' && u !== null) {
+        if(typeof u === 'object' && u !== null && u instanceof user.model) {
           // u is non null object
           // req.session.user is a valid user, u being not null confirms that
 

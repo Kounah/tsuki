@@ -36,7 +36,7 @@ module.exports.create = async function create(properties, options) {
   delete properties._created;
   delete properties._updated;
 
-  let loginValidity = validation.login(properties.login);
+  let loginValidity = validation.validateUsername(properties.username);
   if(!loginValidity.valid) throw new Error(loginValidity.message);
 
   if(typeof options == 'object') {
