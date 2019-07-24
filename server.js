@@ -23,6 +23,23 @@ const error = require('./app/lib/error');
 
 let app = express();
 
+app.use('/*', session({
+  secret: conf.session.secret,
+  resave: conf.session.resave,
+  saveUninitialized: conf.session['save-uninitialized'],
+  cookie: {
+    secure: conf.session.cookie.secure,
+    maxAge: conf.session.cookie['max-age'],
+    expires: conf.session.cookie.expires,
+    sameSite: false
+  }
+}));
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  next();
+});
+
 if(typeof conf['request-delay'] == 'number' && conf['request-delay'] > 0) {
   app.use((req, res, next) => {
     setTimeout(next, conf['request-delay']);
@@ -53,16 +70,6 @@ app.use(bodyParser.json({
 app.use(bodyParser.urlencoded({
   extended: true,
   type: 'application/x-www-form-urlencoded'
-}));
-
-app.use(session({
-  secret: conf.session.secret,
-  resave: conf.session.resave,
-  saveUninitialized: conf.session['save-uninitialized'],
-  cookie: {
-    secure: conf.session.cookie.secure,
-    maxAge: conf.session.cookie['max-age']
-  }
 }));
 
 app.use((req, res, next) => {

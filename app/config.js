@@ -36,9 +36,13 @@ function setting(params) {
   if(typeof params.key !== 'string' || !params.key)
     throw new TypeError('\'params.key\' was not a string or falsy');
 
-  let val =  process.env[`tsuki.${params.key}`] ||
-    jsonpath(uconfig, ...params.key.split('.')) ||
-    params.def;
+  let envval = process.env[`tsuki.${params.key}`];
+  let userconfval = jsonpath(uconfig, ...params.key.split('.'));
+  let val = typeof envval !== 'undefined'
+    ? envval
+    : typeof userconfval !== 'undefined'
+      ? userconfval
+      : params.def;
   if(typeof params.mod === 'function')
     val = params.mod(val);
 
@@ -55,6 +59,60 @@ function ifEmptyString(returnvalue) {
   return function (val) {
     return /\s*/.test(val) ? val : returnvalue;
   };
+}
+
+const timespanPat = /^(([1-9][0-9]*)d){0,1}(([1-9][0-9]*)h){0,1}(([1-9][0-9]*)m){0,1}(([1-9][0-9]*)s){0,1}([1-9][0-9]*){0,1}$/gm;
+/**
+ * parses a timespan string
+ * @param {String|Number} val
+ * `typeof val === 'string'`:
+ * - parses the string as a timestring to a number representing the total milliseconds
+ *   of that timespan
+ * - `1d2h3m4s5` would be the string for 1 day, 2 hours, 3 minutes, 4 seconds and 5 milliseconds
+ * - the least valid string you can parse is `'1'` since anything that fails returns
+ *  `0`
+ * `typeof val === 'number'`:
+ * - parses the number to a timestring, is working the other direction as `typeof val === 'string'`
+ */
+function parseTimespan(val) {
+  if(typeof val === 'string') {
+    if(val === 'null') return null;
+
+    let m;
+    let pat = new RegExp(timespanPat, 'gm');
+    while((m = pat.exec(val)) !== null) {
+      if(m.index === pat.lastIndex) {
+        pat.lastIndex++;
+      }
+
+      return 0 +
+        (Number(m[9]) || 0) +
+        (Number(m[8]) || 0) * 1000 +
+        (Number(m[6]) || 0) * 1000 * 60 +
+        (Number(m[4]) || 0) * 1000 * 60 * 60 +
+        (Number(m[2]) || 0) * 1000 * 60 * 60 * 24;
+    }
+  } else if(typeof val === 'number') {
+    if(isNaN(val)) return null;
+
+    let _ = {
+      d: 1000 * 60 * 60 * 24,
+      h: 1000 * 60 * 60,
+      m: 1000 * 60,
+      s: 1000
+    };
+
+    let result = '';
+    Array.from(Object.entries(_)).forEach(c => {
+      let d = Math.floor(val / c[1]);
+      result += d ? d + c[0] : '';
+      val = val % c[1];
+    });
+    result += val || '';
+    return result;
+  } else if(typeof val === 'object' && val === null) {
+    return null;
+  } else throw new TypeError('unsupported type');
 }
 
 // configures the connection to the database
@@ -149,7 +207,12 @@ module.exports.server = {
       'max-age': setting({
         key: 'server.session.cookie.max-age',
         def: null,
-        mod: val => eval(val)
+        mod: val => parseTimespan(val)
+      }),
+      'expires': setting({
+        key: 'server.session.cookie.expires',
+        def: new Date(new Date().setUTCFullYear(new Date().getUTCFullYear() + 1)),
+        mod: val => new Date(val)
       })
     }
   },
@@ -320,6 +383,6 @@ module.exports.templates = {
   }),
 };
 
-// console.log('config:', module.exports);
+console.log('config:', module.exports);
 
 ucfg.create(module.exports);

@@ -53,7 +53,7 @@ function validatePassword(el) {
       <div class="input-field">
         <label for="login-input-password">Password</label>
         <input type="password" name="password" id="login-input-password" autocomplete="current-password" tabindex="0" validate="validatePassword(this)">
-        <span class="validation">The password must have at least {{ validation["user-min-pwd-length"] }} characters.</span>
+        <span class="validation">The password must have at least {{ api.v1.user.validation.password }} characters.</span>
       </div>
 
       <div class="input-field center">

@@ -120,7 +120,7 @@ function initApiForm() {
 
       if(!valid) return;
 
-      xhr.open(form.method, form.action);
+      xhr.open(form.method, form.action, true);
       xhr.withCredentials = true;
 
       if(form.getAttribute('enctype') === 'application/json') {

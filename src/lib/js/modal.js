@@ -224,13 +224,28 @@ function Modal(el, options) {
       if(options.iframe.src) {
         iframe.src = options.iframe.src;
       } else if(options.iframe.content) {
-        iframe.src = 'data:text/html; base64,' + btoa(options.iframe.content);
+        var blob = new Blob([options.iframe.content], {type: 'text/html'});
+        iframe.src = URL.createObjectURL(blob);
       }
 
+      var fillScroll = function() {
+        iframe.style.width = iframe.contentWindow.document.body.scrollWidth;
+        iframe.style.height = iframe.contentWindow.document.body.scrollHeight;
+      };
+
+
       iframe.addEventListener('load', function() {
-        iframe.width  = iframe.contentWindow.document.body.scrollWidth;
-        iframe.height = iframe.contentWindow.document.body.scrollHeight;
+        fillScroll();
+
+        iframe.contentWindow.addEventListener('load', function() {
+          iframe.contentWindow.document.addEventListener('DOMContentLoaded', function() {
+            fillScroll();
+          });
+        });
+
+        iframe.contentWindow.addEventListener('resize', fillScroll);
       });
+
       content.appendChild(iframe);
     }
 
