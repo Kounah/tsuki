@@ -123,6 +123,10 @@ function initApiForm() {
       xhr.open(form.method, form.action, true);
       xhr.withCredentials = true;
 
+      if(form.getAttribute('accept')) {
+        xhr.setRequestHeader('accept', form.getAttribute('accept'));
+      }
+
       if(form.getAttribute('enctype') === 'application/json') {
         data = JSON.stringify(data);
         xhr.setRequestHeader('Content-Type', 'application/json');

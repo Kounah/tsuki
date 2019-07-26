@@ -1,4 +1,5 @@
 <script src="/src/lib/js/nav.js{{'?nocache' if nocache}}"></script>
+<script src="/src/lib/js/dropdown.js{{'?nocache' if nocache}}"></script>
 
 <nav class="nav">
   <div class="nav-wrapper">
@@ -18,12 +19,16 @@
     <ul class="nav-items end">
       {% if session.user %}
       <!-- is logged in -->
-
-      this template sucks
       <li class="link">
-        <button type="button">
-          <img src="/api/v1/user/_me/avatar" class="avatar-image" />
-          {session.user.name}
+        <button type="button" class="flat dropdown-trigger" data-target="user-dropdown">
+          <img src="/api/v1/user/_me/avatar" class="avatar-image" alt=""/>
+          <span class="full name">
+            <span class="first name">{{ session.user.name.first }}</span>
+            {% for m in session.user.name.middle %}
+            <span class="middle name">{{ m }}</span>
+            {% endfor %}
+            <span class="last name">{{ session.user.name.last }}</span>
+          </span>
         </button>
       </li>
       {% else %}
@@ -34,3 +39,14 @@
     </ul>
   </div>
 </nav>
+
+{% if session.user %}
+<div class="dropdown" id="user-dropdown">
+  <div class="dropdown-header">
+
+  </div>
+  <div class="dropdown-content">
+
+  </div>
+</div>
+{% endif %}

@@ -6,9 +6,12 @@
 // eslint-disable-next-line no-unused-vars
 const express = require('express');
 const error = require('./error');
-const user = require('../api/user');
 const config = require('../config');
 const amw = require('./async-middleware');
+
+const _user = function() {
+  return require('../api/user');
+};
 
 /**
  * generates a express request handler function using `options`
@@ -30,6 +33,8 @@ function handleCheck(options) {
 
     let data = authorization.split(' ');
     let method = data.shift();
+
+    let user = _user();
 
     /**
      * check for inverted option
@@ -53,7 +58,7 @@ function handleCheck(options) {
       let login = credentials.shift();
       let password = credentials.shift();
 
-      let valid = await user.api.validate({
+      let valid = await user.core.validate({
         email: login,
         username: login,
         password: password
@@ -62,7 +67,7 @@ function handleCheck(options) {
       });
 
       if(valid) {
-        req.user = await user.api.findOne({
+        req.user = await user.core.findOne({
           email: login,
           password: password
         });
@@ -172,14 +177,16 @@ function handleSession(options) {
    * @param {() => void} next
    */
   return amw(async function check(req, res, next) {
+    let user = _user();
+
     // type check for req.session
-    if(typeof req.session !== 'object' || req.session === null) {
+    if(typeof req.session === 'object' && req.session !== null) {
       // req session is non null object
       // checking for req.session.user
-      if(typeof req.session.user !== 'object' || req.session.user === null || req.session.user instanceof user.model) {
+      if(typeof req.session.user === 'object' && req.session.user !== null && req.session.user instanceof user.model) {
         // req.session.user is non null object and instance of user.model
         // get u from database for validation
-        let u = await user.core.byLoginPassword(req.session.user.email || req.session.user.login, req.session.user.password, {plainPassword: false});
+        let u = await user.core.byLoginPassword(req.session.user.email || req.session.user.username, req.session.user.password, {plainPassword: false});
 
         // check for u
         if(typeof u === 'object' && u !== null && u instanceof user.model) {

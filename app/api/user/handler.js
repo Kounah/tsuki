@@ -4,6 +4,7 @@ const Handler = require('../../lib/handler');
 const config = require('../../config');
 const core = require('./core');
 const model = require('./model');
+const responses = require('./responses');
 
 /**
  * user handler
@@ -91,10 +92,20 @@ module.exports.login = new Handler({
     if(typeof user === 'object' && user !== null && user instanceof model) {
       req.session.user = user;
 
-      if(typeof req.body.redirectUrl === 'string')
-        res.redirect(req.body.redirectUrl);
-      else res.status(200)
-        .redirect('/account');
+      if(req.accepts('json')) {
+        res.json(new responses.LoginResponse({
+          success: true,
+          data: new responses.LoginResponseData({
+            redirectUrl: req.body.redirectUrl,
+            user: user
+          })
+        }));
+      } else {
+        if(typeof req.body.redirectUrl === 'string')
+          res.redirect(req.body.redirectUrl);
+        else res.status(200).redirect('/account');
+      }
+
     } else throw new error.UnauthorizedError({
       authorization: {
         method: 'session'
