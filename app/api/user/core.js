@@ -1,10 +1,3 @@
-/**
- * User API
- * ---
- * @namespace core
- * @memberof module:api/user
- */
-
 const User = require('./model');
 const validation = require('./validation');
 // eslint-disable-next-line no-unused-vars
@@ -18,7 +11,7 @@ const crypto = require('crypto');
  * password by default expects a hex-digested sha512 hash,
  * the option `plainPassword` creates the hash from the given string
  * ***
- * ignored properties:
+ * __ignored properties__:
  * - _id
  * - _created
  * - _updated
@@ -29,20 +22,20 @@ const crypto = require('crypto');
  * @returns {User.UserProperties} a created object of the User Model
  */
 module.exports.create = async function create(properties, options) {
-  if(typeof properties !== 'object')
+  if(typeof properties !== 'object' || properties === null)
     throw TypeError('\'properties\' is not an Object');
 
   delete properties._id;
   delete properties._created;
   delete properties._updated;
 
-  let loginValidity = validation.validateUsername(properties.username);
-  if(!loginValidity.valid) throw new Error(loginValidity.message);
+  let usernameValidity = validation.username(properties.username);
+  if(!usernameValidity.valid) throw new Error('Invalidity: ' + usernameValidity.message);
 
   if(typeof options == 'object') {
     if(typeof options.plainPassword == 'boolean' && options.plainPassword) {
       let passwordValidity = validation.password(properties.password);
-      if(!passwordValidity.valid) throw new Error(passwordValidity.message);
+      if(!passwordValidity.valid) throw new Error('Invalidity: ' + passwordValidity.message);
 
       properties.password = crypto.createHash('sha512')
         .update(properties.password)
@@ -51,9 +44,8 @@ module.exports.create = async function create(properties, options) {
   }
 
   /**@type {User|User.UserProperties}*/
-  let user = new User(properties);
-
-  return await user.save();
+  let user = await User.create(properties);
+  return user;
 };
 
 /**

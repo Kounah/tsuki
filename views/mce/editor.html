@@ -1,0 +1,18 @@
+{% extends "layouts/default.html" %}
+
+{% block title %}
+Welcome
+{% endblock title %}
+
+{% block links %}
+<link rel="stylesheet" href="/src/mce/style.scss?compile{% '&nocache' if nocache %}">
+{% endblock links %}
+
+{% block scripts %}
+<script src="/src/mce/client.js?compile{% '&nocache' if nocache %}"></script>
+{% endblock scripts %}
+
+{% block content %}
+<noscript>Please enable JavaScript, this application will not work otherwise.</noscript>
+<section id="app"></section>
+{% endblock content %}

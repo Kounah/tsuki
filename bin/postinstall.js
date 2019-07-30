@@ -4,6 +4,7 @@
 const process = require('process');
 const readline = require('readline');
 const user = require('../app/api/user');
+const mce = require('../app/api/mce');
 const mongoose_connect = require('../app/lib/mongoose').connect;
 
 const Writable = require('stream').Writable;
@@ -38,7 +39,7 @@ let rl = readline.createInterface({
   console.log('connected to database');
 
   console.log('checking for admin user');
-  if(!await user.core.exists({login: 'admin'})) {
+  if(!await user.core.exists({username: 'admin'})) {
     let created = await user.core.create({
       login: 'admin',
       password: await new Promise(resolve => {
@@ -57,6 +58,11 @@ let rl = readline.createInterface({
   } else {
     console.log('admin user exists');
   }
+
+  await mce.material.core.deleteAll();
+  let mceMaterials = await mce.material.core.loadFromURL('https://gist.githubusercontent.com/Kounah/919944a21010a42459a77c733407dd73/raw/249df44daacce5063237688c42f98e811109186c/mce_materials.json');
+
+  console.log('loaded mce materials: ', mceMaterials.map(mat => mat.name));
 })()
   .then(() => {
     process.exit(0);

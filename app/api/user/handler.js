@@ -7,14 +7,6 @@ const model = require('./model');
 const responses = require('./responses');
 
 /**
- * user handler
- * ---
- * @namespace handler
- * @memberof module:api/user
- */
-
-
-/**
  * Handler for the `POST` -> `/user` route
  */
 module.exports.create = new Handler({

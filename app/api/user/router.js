@@ -4,14 +4,6 @@ const express = require('express');
 const config = require('../../config');
 
 /**
- * user router
- * ---
- * binds the users handlers to their routes
- * @namespace router
- * @memberof module:api/user
- */
-
-/**
  * handles the routes
  * @param {express.Application} app the express app
  */

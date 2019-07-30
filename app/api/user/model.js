@@ -3,13 +3,6 @@ const permissions = require('./permissions');
 const validation = require('./validation');
 
 /**
- * user model
- * ---
- * @namespace model
- * @memberof module:api/user
- */
-
-/**
  * @typedef {Object} UserProperties
  * @prop {String} username the username (used to display and login)
  * @prop {String} password the sha512 hash of the password

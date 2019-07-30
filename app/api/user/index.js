@@ -1,31 +1,29 @@
 const core = require('./core');
 const model = require('./model');
-const permissions = require('./permissions');
 const handler = require('./handler');
+const permissions = require('./permissions');
+const responses = require('./responses');
 const router = require('./router');
+const validation = require('./validation');
 
 /**
  * user index module
  * ---
- * - [ ] [core](./core.js) main collection of logic
+ * - [x] [core](./core.js) main collection of logic
  * - [x] [model](./model.js) the mongoose model
+ * - [x] [handler](./handler.js) route handler
  * - [x] [permissions](./permissions.js)
- * - [x] [handler](./handler.js)
+ * - [x] [responses](./responses.js) response structures
  * - [x] [router](./router.js) the express router
- * @module api/user
- * @memberof module:api
- * @see {@link module:api/user.core}
- * @see {@link module:api/user.model}
- * @see {@link module:api/user.permissions}
- * @see {@link module:api/user.handler}
- * @see {@link module:api/user.router}
+ * - [x] [validation](./validation.js) data validation
  */
-
 
 module.exports = {
   core,
   model,
-  permissions,
   handler,
-  router
+  permissions,
+  responses,
+  router,
+  validation
 };

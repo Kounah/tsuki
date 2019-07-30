@@ -1,12 +1,4 @@
 /**
- * user permissions
- * ---
- * specifies a users permissions
- * @namespace permissions
- * @memberof module:api/user
- **/
-
-/**
  * @typedef {(
  * 'ADMIN_SERVER'|
  * 'ADMIN_USER'|

@@ -115,6 +115,45 @@ function parseTimespan(val) {
   } else throw new TypeError('unsupported type');
 }
 
+const binmul = Array.prototype.concat.call(
+  ['k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'].map((k, i) => ({k, v: Math.pow(1000, i+1)})),
+  ['Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi', 'Yi'].map((k, i) => ({k, v: Math.pow(1024, i+1)}))
+).reduce((p, c) => {
+  p[c.k] = c.v;
+  return p;
+}, {});
+
+/**
+ * parses a string, representing a file size to the correct number of bytes
+ * @description
+ * the input must consist out of a number (leading 1-9 and followed by as many 0-9)
+ * until an eventual \. is found, after that there can be as many 0-9 until there
+ * is an eventual **multiple** found or the final `B`
+ * @example
+ * parseFileSize('1.5 KiB') // returns 15360 (1.5 kibiByte = 15360 Byte)
+ * parseFileSize('1.5 kB') // returns 15000 (1.5 kiloByte = 15000 Byte)
+ * parseFileSize(15360, 'Ki') // returns '1.5KiB'
+ */
+function parseFileSize(val, format) {
+  if(typeof val === 'string') {
+    let pat = /^(([0-9]{1}[0-9]*?)(\.([0-9]*)){0,1})[\s]*(k|M|G|T|P|E|Z|Y|Ki|Mi|Gi|Ti|Pi|Ei|Zi|Yi){0,1}B$/gm;
+    let m;
+    while((m = pat.exec(val)) !== null) {
+      if (m.index === pat.lastIndex) {
+        pat.lastIndex++;
+      }
+
+      let num = Number(m[1]);
+      let mul = m[5];
+      return Math.trunc(num * binmul[mul]);
+    }
+  } else if(typeof val === 'number') {
+    if(typeof format == 'string' && Object.keys(binmul).includes(format)) {
+      return (val / binmul[format]) + format + 'B';
+    } else throw new TypeError('\'format\' is either not a string or invalid');
+  } else throw new TypeError('\'val\' has an unsupported type: \'' + typeof val + '\'');
+}
+
 // configures the connection to the database
 module.exports.database = {
   /**@type {String} */
@@ -334,6 +373,18 @@ module.exports.api = {
           })
         }
       }
+    },
+    mce: {
+      material: {
+
+        limit: {
+          'icon-size': setting({
+            key: 'api.v1.mce.material.limit.icon-size',
+            def: '2MiB',
+            mod: val => parseFileSize(val)
+          })
+        }
+      }
     }
   }
 };
@@ -383,6 +434,6 @@ module.exports.templates = {
   }),
 };
 
-console.log('config:', module.exports);
+// console.log('config:', module.exports);
 
 ucfg.create(module.exports);
